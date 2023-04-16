@@ -1,0 +1,7 @@
+.gridRow {
+    border: 1px solid rgba(194, 199, 222, 0.4);
+    position: relative;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(60, 1fr);
+}

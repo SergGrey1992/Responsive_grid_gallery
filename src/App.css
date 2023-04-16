@@ -1,38 +1,43 @@
 .App {
-  text-align: center;
+  height: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.dropSquareContainer {
+  /*border:5px solid red;*/
+  min-height: 150px;
+  padding: 10px;
+
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.dropSquare {
+  min-height: 300px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.gridItem {
+  height: 100%!important;
+}
+
+.dragItemsContainer {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-wrap: wrap;
+  gap: 30px 10px;
+  justify-content: space-between;
+  padding: 30px 15px;
+  overflow: hidden;
+  clear: both;
 }
 
-.App-link {
-  color: #61dafb;
+.dragItem {
+  /*margin: 15px;*/
+  cursor: move;
+  position: relative;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.itemInfo {
+  position: absolute;
+  top: -15px;
+  left: -5px;
+  padding: 5px 10px;
+  border-radius: 25px;
+
 }

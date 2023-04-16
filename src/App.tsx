@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+
+import {
+    ControlsGridLayout,
+    DragItem,
+    DropSquare,
+    HelpMonitor,
+} from './components'
+import { useAppSelector } from './hooks'
+
+import './App.css'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const imageData = useAppSelector((state) => state.grid.imageData)
+    return (
+        <div className="App">
+            <HelpMonitor />
+            <ControlsGridLayout />
+            <div className={'dropSquareContainer'}>
+                <DropSquare />
+            </div>
+            <div className={'dragItemsContainer'}>
+                {imageData.map((el, index) => {
+                    return (
+                        <DragItem key={`DragItem.${index}.${el.id}`} {...el} />
+                    )
+                })}
+            </div>
+            {/*<Layer />*/}
+        </div>
+    )
 }
 
-export default App;
+export default App
