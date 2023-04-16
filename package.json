@@ -2,6 +2,7 @@
   "name": "grid_layout",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://SergGrey1992.github.io/Responsive_grid_gallery",
   "dependencies": {
     "@chakra-ui/react": "^2.5.5",
     "@emotion/react": "^11.10.6",
@@ -35,7 +36,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\" ",
-    "lint": "eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix"
+    "lint": "eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -65,6 +68,7 @@
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^2.0.0",
+    "gh-pages": "^5.0.0",
     "prettier": "^2.3.1"
   }
 }
