@@ -172,7 +172,7 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
                                         objectFit: 'contain',
                                         width: '100%',
                                         height: '100%',
-                                        //opacity: 0,
+                                        opacity: 0.2,
                                     }}
                                     alt={'drag_img'}
                                     onLoad={() => {
