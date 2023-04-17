@@ -295,7 +295,10 @@ const gridLayoutSlice = createSlice({
             .addCase(swapGridLayoutElementTC.fulfilled, (state, action) => {
                 const { rowId, newCurrentRow } = action.payload
                 console.log('newCurrentRow', newCurrentRow)
-                state.layouts[rowId] = newCurrentRow
+                state.layouts = {
+                    ...state.layouts,
+                    [rowId]: newCurrentRow,
+                }
             })
     },
 })

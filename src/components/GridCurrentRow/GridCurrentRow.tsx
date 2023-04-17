@@ -119,6 +119,7 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
         console.log('toOrder =>', toOrder)
         dispatch(swapGridLayoutElementTC({ rowId, fromOrder, toOrder }))
     }
+    //const sortedList = tempGridData.slice().sort((a, b) => a.order - b.order)
     return (
         <>
             {tempGridData.map((item, index) => {
