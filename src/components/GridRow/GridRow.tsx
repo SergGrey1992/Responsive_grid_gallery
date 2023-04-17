@@ -104,7 +104,9 @@ export const GridRow = ({ countRows }: GridRowPropsType) => {
                 return (
                     <GridCurrentRow
                         key={`GridCurrentRow.${index}`}
-                        gridRow={layoutsItems[rowId]}
+                        gridRow={layoutsItems[rowId]
+                            .slice()
+                            .sort((a, b) => a.order - b.order)}
                         rowId={rowId}
                     />
                 )

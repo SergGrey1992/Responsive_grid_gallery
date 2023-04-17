@@ -267,6 +267,26 @@ const gridLayoutSlice = createSlice({
                 currentRow.splice(index, 1)
             }
         },
+        moveItemAC: (
+            state,
+            action: PayloadAction<{
+                rowId: string
+                fromOrder: number
+                toOrder: number
+            }>
+        ) => {
+            const { rowId, fromOrder, toOrder } = action.payload
+            const fromItem = state.layouts[rowId].find(
+                (el) => el.order === fromOrder
+            )
+            const toItem = state.layouts[rowId].find(
+                (el) => el.order === toOrder
+            )
+            if (fromItem && toItem) {
+                fromItem.order = toOrder
+                toItem.order = fromOrder
+            }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -313,4 +333,5 @@ export const {
     updateGridAreaIncRowAC,
     addFakeGridElAC,
     removeGridEl,
+    moveItemAC,
 } = gridLayoutSlice.actions

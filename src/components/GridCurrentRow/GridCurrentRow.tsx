@@ -6,11 +6,11 @@ import { useAppDispatch, useAppSelector } from '../../hooks'
 import {
     addFakeGridElAC,
     addGridRowAC,
+    moveItemAC,
     setCountLoadImgInGridAC,
     updateGridAreaIncRowAC,
     updateItemInGridRowAC,
 } from '../../store/reducers'
-import { swapGridLayoutElementTC } from '../../store/thunk'
 import { RowsType } from '../../store/types'
 import { ItemTypeWithOrder } from '../../types/types'
 import { updateGridArea } from '../../utils'
@@ -117,7 +117,7 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
     const moveItem = (fromOrder: number, toOrder: number) => {
         console.log('fromOrder =>', fromOrder)
         console.log('toOrder =>', toOrder)
-        dispatch(swapGridLayoutElementTC({ rowId, fromOrder, toOrder }))
+        dispatch(moveItemAC({ rowId, fromOrder, toOrder }))
     }
     //const sortedList = tempGridData.slice().sort((a, b) => a.order - b.order)
     return (

@@ -68,19 +68,25 @@ export const swapGridLayoutElementTC = createAsyncThunk<
     async ({ rowId, fromOrder, toOrder }, { rejectWithValue, getState }) => {
         try {
             const newCurrentRow = [...getState().grid.layouts[rowId]]
-            const fromIndex = newCurrentRow.findIndex(
+            const fromItem = newCurrentRow.find(
                 (item) => item.order === fromOrder
             )
-            const toIndex = newCurrentRow.findIndex(
-                (item) => item.order === toOrder
-            )
-
-            const movedItem = newCurrentRow.splice(fromIndex, 1)[0]
-            newCurrentRow.splice(toIndex, 0, movedItem)
+            console.log('fromItem', fromItem)
+            const toItem = newCurrentRow.find((item) => item.order === toOrder)
+            console.log('toItem', toItem)
+            if (fromItem && toItem) {
+                fromItem.order = toOrder
+                toItem.order = fromOrder
+                return { rowId, newCurrentRow }
+            }
+            //const movedItem = newCurrentRow.splice(fromIndex, 1)[0]
+            //newCurrentRow.splice(toIndex, 0, movedItem)
             // const newList = [...list];
             // const movedItem = newList.splice(fromIndex, 1)[0]
             // newList.splice(toIndex, 0, movedItem)
             // setList(newList)
+            console.log('prev=> ', getState().grid.layouts[rowId])
+            console.log('newCurrentRow', newCurrentRow)
             return { rowId, newCurrentRow }
         } catch (e) {
             return rejectWithValue('error')

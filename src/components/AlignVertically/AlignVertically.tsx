@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 
 import { useAppDispatch } from '../../hooks'
@@ -34,6 +34,7 @@ export const AlignVertically = ({
     handleBottom,
     moveItem,
 }: PropsWithChildren<AlignVerticallyPropsType>) => {
+    const ref = useRef<HTMLDivElement>(null)
     const [showingVerticalActions, setShowingVerticalActions] = useState(false)
     const [activeAlignSelf, setActiveAlignSelf] = useState<string | undefined>(
         undefined
@@ -70,19 +71,35 @@ export const AlignVertically = ({
     >({
         accept: ItemTypes.BOX1,
         hover: (item, monitor) => {
-            const dragIndex = item.order
-            const hoverIndex = order
+            if (!ref.current) {
+                return
+            }
+            const dragOrder = item.order
+            const hoverOrder = order
 
-            if (dragIndex === hoverIndex) return
-
-            moveItem(dragIndex, hoverIndex)
-            item.order = hoverIndex
+            if (dragOrder === hoverOrder) return
+            // const hoverBoundingRect = ref.current.getBoundingClientRect()
+            // const hoverMiddleY =
+            //     (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+            // const clientOffset = monitor.getClientOffset()
+            // const hoverClientY =
+            //     (clientOffset as XYCoord).y - hoverBoundingRect.top
+            // if (dragOrder < hoverOrder && hoverClientY < hoverMiddleY) {
+            //     return
+            // }
+            //
+            // // Dragging upwards
+            // if (dragOrder > hoverOrder && hoverClientY > hoverMiddleY) {
+            //     return
+            // }
+            moveItem(dragOrder, hoverOrder)
+            item.order = hoverOrder
         },
     })
-
+    drag(drop(ref))
     return (
         <div
-            ref={(node) => drag(drop(node))}
+            ref={ref}
             id={rowId}
             className={styles.alignVerticallyContainer}
             style={{
