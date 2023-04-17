@@ -48,3 +48,16 @@
     cursor: pointer;
     font-size: 12px;
 }
+
+.remove {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: #fff;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}

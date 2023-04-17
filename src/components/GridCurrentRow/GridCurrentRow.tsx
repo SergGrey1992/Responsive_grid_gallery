@@ -10,6 +10,7 @@ import {
     updateGridAreaIncRowAC,
     updateItemInGridRowAC,
 } from '../../store/reducers'
+import { swapGridLayoutElementTC } from '../../store/thunk'
 import { RowsType } from '../../store/types'
 import { ItemTypeWithOrder } from '../../types/types'
 import { updateGridArea } from '../../utils'
@@ -113,6 +114,11 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
         //dispatch(updateOrderInRowWithIncrementAC({ rowId, gridElId, order }))
         console.log('handleBottom')
     }
+    const moveItem = (fromOrder: number, toOrder: number) => {
+        console.log('fromOrder =>', fromOrder)
+        console.log('toOrder =>', toOrder)
+        dispatch(swapGridLayoutElementTC({ rowId, fromOrder, toOrder }))
+    }
     return (
         <>
             {tempGridData.map((item, index) => {
@@ -142,6 +148,7 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
                         properties={['start', 'center', 'end']}
                         handleTop={() => handleTop()}
                         handleBottom={() => handleBottom(rowId, item.id)}
+                        moveItem={moveItem}
                     >
                         <Resizable
                             className={'gridItem'}
@@ -152,70 +159,10 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
                                 width: '100%',
                                 height: '100%',
                             }}
-                            // onResize={(event, direction, elementRef, delta) => {
-                            //     if (widthOneColumnRound) {
-                            //         let arrValues = item.gridArea.split('/')
-                            //         arrValues[3] =
-                            //             +arrValues[3] +
-                            //             Math.ceil(
-                            //                 delta.width /
-                            //                     (Math.ceil(
-                            //                         widthOneColumnRound
-                            //                     ) +
-                            //                         12)
-                            //             ) +
-                            //             ''
-                            //         setTempIncreaseValue(
-                            //             Math.ceil(
-                            //                 delta.width /
-                            //                     (Math.ceil(
-                            //                         widthOneColumnRound
-                            //                     ) +
-                            //                         12)
-                            //             )
-                            //         )
-                            //         const newGridArea = arrValues.join('/')
-                            //         dispatch(
-                            //             updateItemInGridRowAC({
-                            //                 rowId,
-                            //                 itemId: item.id,
-                            //                 newGridArea,
-                            //                 tempIncreaseValue,
-                            //             })
-                            //         )
-                            //         dispatch(setCountLoadImgInGridAC())
-                            //     }
-                            // }}
                             onResize={(event, direction, elementRef, delta) =>
                                 handleResize(delta, item.id)
                             }
                             onResizeStop={handleResizeStop}
-                            // onResizeStop={(event, direction, elementRef, delta) => {
-                            //     setIsResizing(false)
-                            //     setWidth(width + delta.width)
-                            //     setHeight(height + delta.height)
-                            //     if (widthOneColumnRound) {
-                            //         let arrValues = props.gridArea.split('/')
-                            //         arrValues[3] =
-                            //             +arrValues[3] +
-                            //             Math.ceil(
-                            //                 delta.width /
-                            //                     (Math.ceil(widthOneColumnRound) + 12)
-                            //             ) +
-                            //             ''
-                            //         const newGridArea = arrValues.join('/')
-                            //         dispatch(
-                            //             updateItemInGridRowAC({
-                            //                 rowId: props.layoutItemId,
-                            //                 itemId: props.id,
-                            //                 newGridArea,
-                            //             })
-                            //         )
-                            //         dispatch(setCountLoadImgInGridAC())
-                            //     }
-                            //
-                            //     //props.updateDropItem(props.id, width)
-                            // }}
                         >
                             {item.url && (
                                 <img
@@ -224,6 +171,7 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
                                         objectFit: 'contain',
                                         width: '100%',
                                         height: '100%',
+                                        //opacity: 0,
                                     }}
                                     alt={'drag_img'}
                                     onLoad={() => {

@@ -20,6 +20,9 @@ export const HelpMonitor = () => {
     const activeIndexRow = useAppSelector(
         (state) => state.settings.activeIndexRow
     )
+    const activeIndexesColumns = useAppSelector(
+        (state) => state.settings.activeIndexColumn
+    )
 
     const [offset, setOffset] = useState(0)
 
@@ -42,7 +45,7 @@ export const HelpMonitor = () => {
             )}
             {renderLog('activeIdRow', activeIdRow)}
             {renderLog('activeIndexRow', activeIndexRow)}
-            {renderLog('scrollY', offset)}
+            {renderLog('activeIndexesColumns', activeIndexesColumns[0])}
         </div>
     )
 }

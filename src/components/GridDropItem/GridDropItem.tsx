@@ -44,6 +44,7 @@ export const GridDropItem = (props: GridDropItemProps) => {
             properties={['start', 'center', 'end']}
             handleTop={handleTop}
             handleBottom={handleBottom}
+            moveItem={() => {}}
         >
             <Resizable
                 className={'gridItem'}

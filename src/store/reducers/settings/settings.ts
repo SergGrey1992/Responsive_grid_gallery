@@ -13,7 +13,9 @@ const initialSettingsState: InitialSettingsStateType = {
     showingHelperMonitor: false,
     measureRowsHeight: [],
     activeIndexRow: -1,
+    activeIndexColumn: [],
     activeIdRow: '',
+    error: '',
 }
 
 const settingsSlice = createSlice({
@@ -48,11 +50,17 @@ const settingsSlice = createSlice({
         setActiveIndexRowAC: (state, action: PayloadAction<number>) => {
             state.activeIndexRow = action.payload
         },
+        setActiveIndexColumnAC: (state, action: PayloadAction<number[]>) => {
+            state.activeIndexColumn = action.payload
+        },
         setActiveIdRowAC: (state, action: PayloadAction<string>) => {
             state.activeIdRow = action.payload
         },
         setShowingHelperMonitorAC: (state) => {
             state.showingHelperMonitor = !state.showingHelperMonitor
+        },
+        setErrorAC: (state, action: PayloadAction<string>) => {
+            state.error = action.payload
         },
     },
     extraReducers: (builder) => {
@@ -74,6 +82,8 @@ export const {
     changeShowingGridRowsAC,
     setMeasureRowsHeightAC,
     setActiveIndexRowAC,
+    setActiveIndexColumnAC,
     setActiveIdRowAC,
     setShowingHelperMonitorAC,
+    setErrorAC,
 } = settingsSlice.actions

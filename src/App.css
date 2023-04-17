@@ -18,13 +18,15 @@
 }
 
 .dragItemsContainer {
+  position: fixed;
+  bottom: 0;
+  max-height: 250px;
   display: flex;
-  flex-wrap: wrap;
   gap: 30px 10px;
   justify-content: space-between;
   padding: 30px 15px;
-  overflow: hidden;
-  clear: both;
+  overflow: auto;
+  background-color: rgb(172, 175, 197);
 }
 
 .dragItem {

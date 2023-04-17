@@ -20,4 +20,5 @@ export interface DropResult {
 //
 export const ItemTypes = {
     BOX: 'box',
+    BOX1: 'box1',
 }

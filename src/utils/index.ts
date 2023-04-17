@@ -1,3 +1,4 @@
+export * from './getClone'
 export * from './getColumnsPercent'
 export * from './getLogBoxReduxToolkit'
 export * from './getRandomHexColor'

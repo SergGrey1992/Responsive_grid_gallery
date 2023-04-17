@@ -8,5 +8,7 @@ export type InitialSettingsStateType = {
     showingHelperMonitor: boolean
     measureRowsHeight: number[]
     activeIndexRow: number
+    activeIndexColumn: number[]
     activeIdRow: string
+    error: string
 }

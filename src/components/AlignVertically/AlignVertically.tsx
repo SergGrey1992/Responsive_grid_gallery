@@ -1,7 +1,10 @@
 import type { PropsWithChildren } from 'react'
 import React, { useState } from 'react'
+import { useDrag, useDrop } from 'react-dnd'
 
 import { useAppDispatch } from '../../hooks'
+import { removeGridEl } from '../../store/reducers'
+import { ItemTypes, ItemTypeWithOrder } from '../../types/types'
 
 import styles from './AlignVertically.module.css'
 
@@ -17,6 +20,7 @@ type AlignVerticallyPropsType = {
     properties: string[]
     handleTop: () => void
     handleBottom: () => void
+    moveItem: (fromOrder: number, toOrder: number) => void
 }
 export const AlignVertically = ({
     rowId,
@@ -28,17 +32,57 @@ export const AlignVertically = ({
     properties,
     handleTop,
     handleBottom,
+    moveItem,
 }: PropsWithChildren<AlignVerticallyPropsType>) => {
     const [showingVerticalActions, setShowingVerticalActions] = useState(false)
     const [activeAlignSelf, setActiveAlignSelf] = useState<string | undefined>(
         undefined
     )
+    const dispatch = useAppDispatch()
     const show = () => setShowingVerticalActions(true)
     const hidden = () => setShowingVerticalActions(false)
-    const dispatch = useAppDispatch()
+    const removeGridItem = () => {
+        dispatch(removeGridEl({ rowId, elId: gridElId }))
+    }
+
+    const [{ isDragging }, drag] = useDrag<
+        ItemTypeWithOrder,
+        {},
+        {
+            isDragging: boolean
+        }
+    >({
+        type: ItemTypes.BOX1,
+        //@ts-ignore
+        item: { order },
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+        }),
+    })
+
+    const [, drop] = useDrop<
+        ItemTypeWithOrder,
+        {},
+        {
+            isOver: boolean
+            canDrop: boolean
+        }
+    >({
+        accept: ItemTypes.BOX1,
+        hover: (item, monitor) => {
+            const dragIndex = item.order
+            const hoverIndex = order
+
+            if (dragIndex === hoverIndex) return
+
+            moveItem(dragIndex, hoverIndex)
+            item.order = hoverIndex
+        },
+    })
 
     return (
         <div
+            ref={(node) => drag(drop(node))}
             id={rowId}
             className={styles.alignVerticallyContainer}
             style={{
@@ -77,6 +121,12 @@ export const AlignVertically = ({
                                     </div>
                                 )
                             })}
+                            <div
+                                className={styles.remove}
+                                onClick={removeGridItem}
+                            >
+                                X
+                            </div>
                         </div>
                     )}
                 </>

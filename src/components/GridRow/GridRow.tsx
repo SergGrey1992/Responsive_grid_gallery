@@ -2,15 +2,11 @@ import React, { useRef } from 'react'
 import { useDrop } from 'react-dnd'
 
 import { useAppDispatch, useAppSelector } from '../../hooks'
-import {
-    addItemInGridRowAC,
-    setActiveIdRowAC,
-    setActiveIndexRowAC,
-} from '../../store/reducers'
+import { setActiveIdRowAC, setActiveIndexRowAC } from '../../store/reducers'
+import { addItemInGridRowTC } from '../../store/thunk'
 import { DropResult, ItemTypes } from '../../types/types'
 import { GridCurrentRow } from '../GridCurrentRow/GridCurrentRow'
 import { NetGridColumn } from '../NetGridColumn/NetGridColumn'
-import { NetGridRow } from '../NetGridRow/NetGridRow'
 
 import styles from './GridRow.module.css'
 
@@ -38,15 +34,11 @@ export const GridRow = ({ countRows }: GridRowPropsType) => {
                 console.log('DROP ADD ITEM => ', activeIdRow)
 
                 dispatch(
-                    addItemInGridRowAC({
-                        rowId: activeIdRow,
-                        //rowIndex: activeIndexRow,
-                        item: {
-                            ...item.item,
-                            order: 1,
-                            gridArea: `${1}/1/${1}/13`,
-                            type: 'img',
-                        },
+                    addItemInGridRowTC({
+                        ...item.item,
+                        order: 1,
+                        gridArea: `${1}/1/${1}/13`,
+                        type: 'img',
                     })
                 )
                 //console.log('monitor => ', monitor.getClientOffset())
@@ -94,7 +86,7 @@ export const GridRow = ({ countRows }: GridRowPropsType) => {
             }}
         >
             <NetGridColumn />
-            <NetGridRow />
+            {/*<NetGridRow />*/}
 
             {/*{Object.keys(layoutsItems).map((rowId) => {*/}
             {/*    return layoutsItems[rowId].map((item, index) => {*/}

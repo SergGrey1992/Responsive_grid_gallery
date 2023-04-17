@@ -1,6 +1,7 @@
 import React from 'react'
 
 import {
+    AlertComponent,
     ControlsGridLayout,
     DragItem,
     DropSquare,
@@ -15,6 +16,7 @@ function App() {
     return (
         <div className="App">
             <HelpMonitor />
+            <AlertComponent />
             <ControlsGridLayout />
             <div className={'dropSquareContainer'}>
                 <DropSquare />
