@@ -276,15 +276,17 @@ const gridLayoutSlice = createSlice({
             }>
         ) => {
             const { rowId, fromOrder, toOrder } = action.payload
-            const fromItem = state.layouts[rowId].find(
+            let fromItem = state.layouts[rowId].find(
                 (el) => el.order === fromOrder
             )
-            const toItem = state.layouts[rowId].find(
-                (el) => el.order === toOrder
-            )
+            let toItem = state.layouts[rowId].find((el) => el.order === toOrder)
             if (fromItem && toItem) {
-                fromItem.order = toOrder
-                toItem.order = fromOrder
+                const tempUrl = fromItem.url
+                const tempBgr = fromItem.backgroundColor
+                fromItem.url = toItem.url
+                fromItem.backgroundColor = toItem.backgroundColor
+                toItem.url = tempUrl
+                toItem.backgroundColor = tempBgr
             }
         },
     },
