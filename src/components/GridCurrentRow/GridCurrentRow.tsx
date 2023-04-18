@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Resizable } from 're-resizable'
 import { v1 } from 'uuid'
 
-import { MIN_COLUMN } from '../../constants'
+import { GAP, MIN_COLUMN } from '../../constants'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import {
     addFakeGridElAC,
@@ -24,6 +24,9 @@ type GridCurrentRowPropsType = {
 
 export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
     const rows = useAppSelector((state) => state.grid.rows)
+    const widthOneColumnRound = useAppSelector(
+        (state) => state.settings.widthOneColumnRound
+    )
     const [tempGridData, setTempGridData] =
         useState<ItemTypeWithOrder[]>(gridRow)
     useEffect(() => {
@@ -33,7 +36,11 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
     const dispatch = useAppDispatch()
 
     const handleResize = (delta: any, id: string) => {
-        const increaseValue = Math.round(delta.width / 12) //todo 12 пикселей хардкод убрать
+        console.log('delta.width', delta.width)
+        if (widthOneColumnRound === undefined) return
+        const increaseValue = Math.round(
+            delta.width / (widthOneColumnRound + GAP)
+        ) //todo 12 пикселей хардкод убрать
         //console.log('increaseValue', increaseValue)
         const currentEl = gridRow.find((el) => el.id === id)
         if (currentEl) {
@@ -168,8 +175,8 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
                             style={{
                                 backgroundColor: item.backgroundColor,
                                 //position: 'relative',
-                                //width: '100%',
-                                //height: '100%',
+                                width: '100%',
+                                height: '100%',
                                 //gridArea: item.gridArea,
                             }}
                             onResize={(event, direction, elementRef, delta) =>
