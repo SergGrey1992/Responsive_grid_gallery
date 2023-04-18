@@ -3,16 +3,14 @@ import React from 'react'
 import {
     AlertComponent,
     ControlsGridLayout,
-    DragItem,
     DropSquare,
     HelpMonitor,
+    MediaLibrary,
 } from './components'
-import { useAppSelector } from './hooks'
 
 import './App.css'
 
 function App() {
-    const imageData = useAppSelector((state) => state.grid.imageData)
     return (
         <div className="App">
             <HelpMonitor />
@@ -21,13 +19,7 @@ function App() {
             <div className={'dropSquareContainer'}>
                 <DropSquare />
             </div>
-            <div className={'dragItemsContainer'}>
-                {imageData.map((el, index) => {
-                    return (
-                        <DragItem key={`DragItem.${index}.${el.id}`} {...el} />
-                    )
-                })}
-            </div>
+            <MediaLibrary />
             {/*<Layer />*/}
         </div>
     )

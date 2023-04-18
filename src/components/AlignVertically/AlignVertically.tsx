@@ -78,20 +78,6 @@ export const AlignVertically = ({
             const hoverOrder = order
 
             if (dragOrder === hoverOrder) return
-            // const hoverBoundingRect = ref.current.getBoundingClientRect()
-            // const hoverMiddleY =
-            //     (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
-            // const clientOffset = monitor.getClientOffset()
-            // const hoverClientY =
-            //     (clientOffset as XYCoord).y - hoverBoundingRect.top
-            // if (dragOrder < hoverOrder && hoverClientY < hoverMiddleY) {
-            //     return
-            // }
-            //
-            // // Dragging upwards
-            // if (dragOrder > hoverOrder && hoverClientY > hoverMiddleY) {
-            //     return
-            // }
             moveItem(dragOrder, hoverOrder)
             item.order = hoverOrder
         },
@@ -104,7 +90,7 @@ export const AlignVertically = ({
             className={styles.alignVerticallyContainer}
             style={{
                 alignItems: activeAlignSelf,
-                gridArea: gridAreaItem,
+                //gridArea: gridAreaItem,
             }}
         >
             <div onMouseEnter={show} onMouseLeave={hidden}>

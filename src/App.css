@@ -5,8 +5,8 @@
 .dropSquareContainer {
   /*border:5px solid red;*/
   min-height: 150px;
-  padding: 10px;
-
+  padding: 10px 10px 250px 10px;
+  /*padding-bottom: 250px;*/
 }
 
 .dropSquare {
@@ -14,19 +14,7 @@
 }
 
 .gridItem {
-  height: 100%!important;
-}
-
-.dragItemsContainer {
-  position: fixed;
-  bottom: 0;
-  max-height: 250px;
-  display: flex;
-  gap: 30px 10px;
-  justify-content: space-between;
-  padding: 30px 15px;
-  overflow: auto;
-  background-color: rgb(172, 175, 197);
+  /*height: 100%!important;*/
 }
 
 .dragItem {
