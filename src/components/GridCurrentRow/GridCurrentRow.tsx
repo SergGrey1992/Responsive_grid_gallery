@@ -30,18 +30,15 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
     const [tempGridData, setTempGridData] =
         useState<ItemTypeWithOrder[]>(gridRow)
     useEffect(() => {
-        console.log('call useEffect')
         setTempGridData(gridRow)
     }, [gridRow])
     const dispatch = useAppDispatch()
 
     const handleResize = (delta: any, id: string) => {
-        console.log('delta.width', delta.width)
         if (widthOneColumnRound === undefined) return
         const increaseValue = Math.round(
             delta.width / (widthOneColumnRound + GAP)
-        ) //todo 12 пикселей хардкод убрать
-        //console.log('increaseValue', increaseValue)
+        )
         const currentEl = gridRow.find((el) => el.id === id)
         if (currentEl) {
             const [, columnStart, , columnEnd] = currentEl.gridArea.split('/')
@@ -130,6 +127,14 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
     const moveItem = (fromOrder: number, toOrder: number) => {
         dispatch(moveItemAC({ rowId, fromOrder, toOrder }))
     }
+    // console.log(
+    //     'tempGridData',
+    //     tempGridData
+    //         .sort(
+    //             (a, b) => +a.gridArea.split('/')[1] - +b.gridArea.split('/')[1]
+    //         )
+    //         .map((el) => el.gridArea)
+    // )
     return (
         <>
             {tempGridData.map((item, index) => {
@@ -149,18 +154,6 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
                     )
                 }
                 return (
-                    // <AlignVertically
-                    //     key={`GridDropItem.${item.id}.${index}`}
-                    //     rowId={rowId}
-                    //     gridElId={item.id}
-                    //     order={item.order}
-                    //     gridAreaItem={item.gridArea}
-                    //     actions={['top', 'center', 'bottom']}
-                    //     properties={['start', 'center', 'end']}
-                    //     handleTop={() => handleTop()}
-                    //     handleBottom={() => handleBottom(rowId, item.id)}
-                    //     moveItem={moveItem}
-                    // >
                     <div
                         key={`GridDropItem.${item.id}.${index}`}
                         style={{
@@ -174,10 +167,8 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
                             size={{ width: '100%', height: '100%' }}
                             style={{
                                 backgroundColor: item.backgroundColor,
-                                //position: 'relative',
                                 width: '100%',
                                 height: '100%',
-                                //gridArea: item.gridArea,
                             }}
                             onResize={(event, direction, elementRef, delta) =>
                                 handleResize(delta, item.id)
@@ -205,7 +196,6 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
                                             objectFit: 'contain',
                                             width: '100%',
                                             height: '100%',
-                                            //opacity: 0.2,
                                         }}
                                         alt={'drag_img'}
                                         onLoad={() => {
@@ -216,7 +206,6 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
                             </AlignVertically>
                         </Resizable>
                     </div>
-                    // </AlignVertically>
                 )
             })}
         </>

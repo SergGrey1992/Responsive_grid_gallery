@@ -50,12 +50,10 @@ const gridLayoutSlice = createSlice({
                 item: ItemTypeWithOrder
             }>
         ) => {
-            if (action.payload.rowId === '') return
-            const orderRow = state.rows.find(
-                (row) => row.id === action.payload.rowId
-            )
-            const lengthItemInGridRow =
-                state.layouts[action.payload.rowId].length
+            const { rowId, item } = action.payload
+            if (rowId === '') return
+            const orderRow = state.rows.find((row) => row.id === rowId)
+            const lengthItemInGridRow = state.layouts[rowId].length
             if (orderRow) {
                 /**
                  * orderRow => orderRow.order => номер строки где распологать новый элемент
@@ -77,96 +75,30 @@ const gridLayoutSlice = createSlice({
                 const step = MIN_COLUMN
                 const area = step * lengthItemInGridRow
                 const itemWithCurrentRow = {
-                    ...action.payload.item,
+                    ...item,
                     order: lengthItemInGridRow + 1,
                     gridArea: `${orderRow.order}/${area + 1}/${
                         orderRow.order
                     }/${area + 1 + step}`,
                 } as ItemTypeWithOrder
-
-                state.layouts[action.payload.rowId].push(itemWithCurrentRow)
+                state.layouts[rowId].push(itemWithCurrentRow)
+                // state.layouts[rowId].sort(
+                //     (a, b) =>
+                //         +a.gridArea.split('/')[1] - +b.gridArea.split('/')[1]
+                // )
+                // state.layouts[rowId].map((el) => el)
                 return
             }
-            state.layouts[action.payload.rowId].push(action.payload.item)
+            state.layouts[rowId].push(item)
         },
         updateItemInGridRowAC: (
             state,
             action: PayloadAction<{
                 rowId: string
                 newFullRow: ItemTypeWithOrder[]
-                //itemId: string
-                //newGridArea: string
-                //tempIncreaseValue: number
             }>
         ) => {
             state.layouts[action.payload.rowId] = action.payload.newFullRow
-            //console.log('updateItemInGridRowAC state => ', state)
-            //console.log('1231312', state.layouts[action.payload.rowId])
-            //console.log('newGridArea =>>>', action.payload.newGridArea)
-            // const step = 12
-            //
-            // const indexEl = state.layouts[action.payload.rowId].findIndex(
-            //     (el) => el.id === action.payload.itemId
-            // )
-            // if (indexEl > -1) {
-            //     const oldEnd =
-            //         +state.layouts[action.payload.rowId][
-            //             indexEl
-            //         ].gridArea.split('/')[3]
-            //     const newEnd = +action.payload.newGridArea.split('/')[3]
-            //     const difference = newEnd - oldEnd
-            //     const updatedData = updateGridArea(
-            //         state.layouts[action.payload.rowId],
-            //         action.payload.itemId,
-            //         action.payload.tempIncreaseValue
-            //     )
-            //     if (updatedData) {
-            //         state.layouts[action.payload.rowId] = updatedData
-            //     }
-            //     // state.layouts[action.payload.rowId][indexEl].gridArea =
-            //     //     action.payload.newGridArea
-            //
-            //     getLogBoxReduxToolkit('updatedData', updatedData)
-            //     // for (
-            //     //     let i = indexEl + 1;
-            //     //     i < state.layouts[action.payload.rowId].length;
-            //     //     i++
-            //     // ) {
-            //     //     getLogBoxReduxToolkit(
-            //     //         '123',
-            //     //         state.layouts[action.payload.rowId][i]
-            //     //     )
-            //     //     console.log('=>>>', endColumn + step * i)
-            //     // }
-            // }
-            // state.layouts = {
-            //     ...state.layouts,
-            //     [action.payload.rowId]: state.layouts[action.payload.rowId].map(
-            //         (el) =>
-            //             el.id === action.payload.itemId
-            //                 ? {
-            //                       ...el,
-            //                       gridArea: action.payload.newGridArea,
-            //                   }
-            //                 : el
-            //     ),
-            // }
-            // const item = state.layouts[action.payload.rowId]
-            // console.log('state.layouts', state.layouts)
-            // const index = item.findIndex((t) => t.id === action.payload.rowId)
-            // if (index > -1) {
-            //     item[index] = {
-            //         ...item[index],
-            //         columnPercent: action.payload.columnPercent,
-            //     }
-            // }
-            // state.layouts[action.payload.rowId] = state.layouts[
-            //     action.payload.rowId
-            // ].map((el) =>
-            //     el.id === action.payload.rowId
-            //         ? { ...el, columnPercent: action.payload.columnPercent }
-            //         : el
-            // )
         },
         updateOrderInRowWithIncrementAC: (
             state,

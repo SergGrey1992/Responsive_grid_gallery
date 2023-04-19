@@ -101,12 +101,14 @@ export const GridRow = ({ countRows }: GridRowPropsType) => {
             {/*    })*/}
             {/*})}*/}
             {Object.keys(layoutsItems).map((rowId, index) => {
+                const a = [...layoutsItems[rowId]].sort(
+                    (a, b) =>
+                        +a.gridArea.split('/')[1] - +b.gridArea.split('/')[1]
+                )
                 return (
                     <GridCurrentRow
                         key={`GridCurrentRow.${index}`}
-                        gridRow={layoutsItems[rowId]
-                            .slice()
-                            .sort((a, b) => a.order - b.order)}
+                        gridRow={a}
                         rowId={rowId}
                     />
                 )
