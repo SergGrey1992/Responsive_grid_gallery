@@ -4,11 +4,12 @@ import { v1 } from 'uuid'
 import { MIN_COLUMN } from '../../../constants'
 import { ItemType, ItemTypeWithOrder } from '../../../types/types'
 import {
+    createGridItem,
     getRandomHexColor,
     getRandomImgUrl,
     getRandomNumber,
 } from '../../../utils'
-import { addItemInGridRowTC, swapGridLayoutElementTC } from '../../thunk'
+import { addItemInGridRowTC } from '../../thunk'
 import { InitGridLayoutStateType, RowsType } from '../../types'
 
 const FakeData: ItemType[] = [...Array(getRandomNumber(10, 20))].map((_) => ({
@@ -26,6 +27,9 @@ const initialGridLayoutState: InitGridLayoutStateType = {
     rows: [],
     layouts: {},
     imageData: FakeData,
+    tempSettings: {
+        increaseValue: 0,
+    },
 }
 
 const gridLayoutSlice = createSlice({
@@ -43,54 +47,27 @@ const gridLayoutSlice = createSlice({
                 order: action.payload.order,
             })
         },
-        addItemInGridRowAC: (
-            state,
-            action: PayloadAction<{
-                rowId: string
-                item: ItemTypeWithOrder
-            }>
-        ) => {
-            const { rowId, item } = action.payload
-            if (rowId === '') return
-            const orderRow = state.rows.find((row) => row.id === rowId)
-            const lengthItemInGridRow = state.layouts[rowId].length
-            if (orderRow) {
-                /**
-                 * orderRow => orderRow.order => номер строки где распологать новый элемент
-                 * gridArea: `${orderRow.order}/1/${orderRow.order}/13`
-                 *=
-                 * lengthItemInGridRow
-                 * const step = 12
-                 *
-                 * gridArea: `$1/ ==> (1?) <==  /1/  ==> (2?) <==  `
-                 *
-                 * 1?                       2?
-                 *
-                 * 12 * 0 = 0 + 1  (1)      12 * 0 = 0 + 1 + step  (13)
-                 * 12 * 1 = 12 + 1 (13)     12 * 1 = 12 + 1 + step (25)
-                 * 12 * 2 = 24 + 1 (25)     12 * 2 = 24 + 1 + step (36)
-                 * 12 * 3 = 36 + 1 (37)     12 * 3 = 36 + 1 + step (48)
-                 * 12 * 4 = 48 + 1  (49)    12 * 4 = 48 + 1 + step (61)
-                 */
-                const step = MIN_COLUMN
-                const area = step * lengthItemInGridRow
-                const itemWithCurrentRow = {
-                    ...item,
-                    order: lengthItemInGridRow + 1,
-                    gridArea: `${orderRow.order}/${area + 1}/${
-                        orderRow.order
-                    }/${area + 1 + step}`,
-                } as ItemTypeWithOrder
-                state.layouts[rowId].push(itemWithCurrentRow)
-                // state.layouts[rowId].sort(
-                //     (a, b) =>
-                //         +a.gridArea.split('/')[1] - +b.gridArea.split('/')[1]
-                // )
-                // state.layouts[rowId].map((el) => el)
-                return
-            }
-            state.layouts[rowId].push(item)
-        },
+        // addItemInGridRowAC: (
+        //     state,
+        //     action: PayloadAction<{
+        //         rowId: string
+        //         item: ItemTypeWithOrder
+        //     }>
+        // ) => {
+        //     const { rowId, item } = action.payload
+        //     if (rowId === '') return
+        //     const currentRow = state.rows.find((row) => row.id === rowId)
+        //     const lengthItemInGridRow = state.layouts[rowId].length
+        //     if (currentRow) {
+        //         const order = lengthItemInGridRow + 1
+        //         const area = MIN_COLUMN * lengthItemInGridRow
+        //         const girdArea = `${currentRow.order}/${area + 1}/${
+        //             currentRow.order + 1
+        //         }/${area + 1 + MIN_COLUMN}`
+        //         const item_ = createGridItem(item, order, girdArea)
+        //         state.layouts[rowId].push(item_)
+        //     }
+        // },
         updateItemInGridRowAC: (
             state,
             action: PayloadAction<{
@@ -221,39 +198,47 @@ const gridLayoutSlice = createSlice({
                 toItem.backgroundColor = tempBgr
             }
         },
+        updateIncreaseValueAC: (state, action: PayloadAction<number>) => {
+            state.tempSettings.increaseValue = action.payload
+        },
+        testUpdateGridAreaAC: (
+            state,
+            action: PayloadAction<{
+                rowId: string
+                id: string
+                gridArea: string
+            }>
+        ) => {
+            const { rowId, id, gridArea } = action.payload
+            const currentElement = state.layouts[rowId].find(
+                (el) => el.id === id
+            )
+            if (currentElement) {
+                currentElement.gridArea = gridArea
+            }
+        },
     },
     extraReducers: (builder) => {
-        builder
-            .addCase(addItemInGridRowTC.fulfilled, (state, action) => {
-                const { rowId, activeColumn, item } = action.payload
-                const lengthItemInGridRow = state.layouts[rowId].length
-                if (rowId === '' || lengthItemInGridRow >= 6) return
-                const currentRow = state.rows.find(
-                    (row) => row.id === action.payload.rowId
+        builder.addCase(addItemInGridRowTC.fulfilled, (state, action) => {
+            const { rowId, activeColumn, item } = action.payload
+            const lengthItemInGridRow = state.layouts[rowId].length
+            if (rowId === '' || lengthItemInGridRow >= 6) return
+            const currentRow = state.rows.find(
+                (row) => row.id === action.payload.rowId
+            )
+            if (currentRow) {
+                const gridArea = `${currentRow.order}/${activeColumn}/${
+                    currentRow.order + 1
+                }/${activeColumn + MIN_COLUMN}`
+                const itemWithCurrentRow = createGridItem(
+                    item,
+                    lengthItemInGridRow + 1,
+                    gridArea
                 )
-                if (currentRow) {
-                    //const step = MIN_COLUMN
-                    //const area = step * lengthItemInGridRow
-                    const itemWithCurrentRow = {
-                        ...item,
-                        order: lengthItemInGridRow + 1,
-                        gridArea: `${currentRow.order}/${activeColumn}/${
-                            currentRow.order
-                        }/${activeColumn + MIN_COLUMN}`,
-                    } as ItemTypeWithOrder
-
-                    state.layouts[action.payload.rowId].push(itemWithCurrentRow)
-                    return
-                }
-            })
-            .addCase(swapGridLayoutElementTC.fulfilled, (state, action) => {
-                const { rowId, newCurrentRow } = action.payload
-                console.log('newCurrentRow', newCurrentRow)
-                state.layouts = {
-                    ...state.layouts,
-                    [rowId]: newCurrentRow,
-                }
-            })
+                state.layouts[action.payload.rowId].push(itemWithCurrentRow)
+                return
+            }
+        })
     },
 })
 
@@ -261,11 +246,12 @@ export const gridLayoutReducer = gridLayoutSlice.reducer
 
 export const {
     addGridRowAC,
-    addItemInGridRowAC,
     updateItemInGridRowAC,
     updateOrderInRowWithIncrementAC,
     updateGridAreaIncRowAC,
     addFakeGridElAC,
     removeGridEl,
     moveItemAC,
+    updateIncreaseValueAC,
+    testUpdateGridAreaAC,
 } = gridLayoutSlice.actions

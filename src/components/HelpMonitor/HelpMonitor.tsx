@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 import { useAppSelector } from '../../hooks'
 
@@ -16,23 +16,9 @@ export const HelpMonitor = () => {
     const measureRowsHeight = useAppSelector(
         (state) => state.settings.measureRowsHeight
     )
-    const activeIdRow = useAppSelector((state) => state.settings.activeIdRow)
-    const activeIndexRow = useAppSelector(
-        (state) => state.settings.activeIndexRow
+    const increaseValue = useAppSelector(
+        (state) => state.grid.tempSettings.increaseValue
     )
-    const activeIndexesColumns = useAppSelector(
-        (state) => state.settings.activeIndexColumn
-    )
-
-    const [offset, setOffset] = useState(0)
-
-    useEffect(() => {
-        const onScroll = () => setOffset(window.scrollY)
-        // clean up code
-        window.removeEventListener('scroll', onScroll)
-        window.addEventListener('scroll', onScroll, { passive: true })
-        return () => window.removeEventListener('scroll', onScroll)
-    }, [])
     if (!showingHelperMonitor) {
         return null
     }
@@ -43,9 +29,7 @@ export const HelpMonitor = () => {
                 'sum',
                 measureRowsHeight.reduce((partialSum, a) => partialSum + a, 0)
             )}
-            {renderLog('activeIdRow', activeIdRow)}
-            {renderLog('activeIndexRow', activeIndexRow)}
-            {renderLog('activeIndexesColumns', activeIndexesColumns[0])}
+            {renderLog('increaseValue', increaseValue)}
         </div>
     )
 }

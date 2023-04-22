@@ -15,7 +15,6 @@ export const addItemInGridRowTC = createAsyncThunk<
         try {
             const activeIdRow = getState().settings.activeIdRow
             const activeColumn = getState().settings.activeIndexColumn[0] + 1
-            console.log('activeColumn', activeColumn)
             if (isNaN(activeColumn)) {
                 dispatch(setErrorAC('Нету выбраной колонки'))
                 return rejectWithValue('NaN')
@@ -43,7 +42,7 @@ export const addItemInGridRowTC = createAsyncThunk<
                         activeColumn >= currPos &&
                         activeColumn + MIN_COLUMN - 1 <= nextPos
                     ) {
-                        console.log(`Можно вставить на позицию ${activeColumn}`)
+                        //console.log(`Можно вставить на позицию ${activeColumn}`)
                         return { rowId: activeIdRow, activeColumn, item: data }
                     }
                 }
@@ -52,7 +51,6 @@ export const addItemInGridRowTC = createAsyncThunk<
             }
             dispatch(setErrorAC('Нельзя вставить'))
             return rejectWithValue('Нельзя вставить')
-            //return { rowId: activeIdRow, activeColumn, item: data }
         } catch (e) {
             return rejectWithValue('null')
         }

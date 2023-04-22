@@ -1,0 +1,39 @@
+.containerGridAreaItem {
+    width: 100%;
+    height: 100%;
+}
+
+.containerResizable {
+    height: 100%!important;
+}
+
+.imageGrid {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+}
+
+.handleComponentTop {
+    background-color: rgb(172, 175, 197);
+    height: 10%;
+    width: 100%;
+    cursor: n-resize!important;
+}
+.handleComponentRight {
+    background-color: rgb(172, 175, 197);
+    height: 100%;
+    width: 100%;
+    cursor: e-resize!important;
+}
+.handleComponentBottom {
+    background-color: rgb(172, 175, 197);
+    height: 100%;
+    width: 100%;
+    cursor: s-resize!important;
+}
+.handleComponentLeft {
+    background-color: rgb(172, 175, 197);
+    height: 100%;
+    width: 100%;
+    cursor: w-resize!important;
+}

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Resizable } from 're-resizable'
+//@ts-ignore
+import { Direction } from 're-resizable'
 import { v1 } from 'uuid'
 
-import { GAP, MIN_COLUMN } from '../../constants'
+import { GAP } from '../../constants'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import {
     addFakeGridElAC,
@@ -10,12 +11,12 @@ import {
     moveItemAC,
     setCountLoadImgInGridAC,
     updateGridAreaIncRowAC,
+    updateIncreaseValueAC,
     updateItemInGridRowAC,
 } from '../../store/reducers'
 import { RowsType } from '../../store/types'
 import { ItemTypeWithOrder } from '../../types/types'
-import { updateGridArea } from '../../utils'
-import { AlignVertically } from '../AlignVertically/AlignVertically'
+import { GridAreaItem } from '../GridAreaItem/GridAreaItem'
 
 type GridCurrentRowPropsType = {
     gridRow: ItemTypeWithOrder[]
@@ -34,28 +35,42 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
     }, [gridRow])
     const dispatch = useAppDispatch()
 
-    const handleResize = (delta: any, id: string) => {
+    const handleResize = (direction: Direction, delta: any, id: string) => {
         if (widthOneColumnRound === undefined) return
+        if (direction === 'top') {
+            console.log('handleResize => top')
+        } else if (direction === 'right') {
+            console.log('handleResize => right')
+        } else if (direction === 'bottom') {
+            console.log('handleResize => bottom')
+        } else if (direction === 'left') {
+            console.log('handleResize => left')
+        }
+
         const increaseValue = Math.round(
             delta.width / (widthOneColumnRound + GAP)
         )
-        const currentEl = gridRow.find((el) => el.id === id)
-        if (currentEl) {
-            const [, columnStart, , columnEnd] = currentEl.gridArea.split('/')
-            const columnsOccupied = parseInt(columnEnd) - parseInt(columnStart)
-            if (columnsOccupied + increaseValue < MIN_COLUMN) {
-                return
-            }
-        }
-        const clonedGridData = JSON.parse(JSON.stringify(gridRow))
-        const updatedGridData = updateGridArea(
-            clonedGridData,
-            id,
-            increaseValue
-        )
-        if (updatedGridData) {
-            setTempGridData(updatedGridData)
-        }
+        dispatch(updateIncreaseValueAC(increaseValue))
+        //todo рабочее только для одной строки
+        // const currentEl = gridRow.find((el) => el.id === id)
+        // if (currentEl) {
+        //     const [, columnStart, , columnEnd] = currentEl.gridArea.split('/')
+        //     const columnsOccupied = parseInt(columnEnd) - parseInt(columnStart)
+        //     if (columnsOccupied + increaseValue < MIN_COLUMN) {
+        //         return
+        //     }
+        // }
+        // const clonedGridData: ItemTypeWithOrder[] = JSON.parse(
+        //     JSON.stringify(gridRow)
+        // )
+        // const updatedGridData = updateGridArea(
+        //     clonedGridData,
+        //     id,
+        //     increaseValue
+        // )
+        // if (updatedGridData) {
+        //     setTempGridData(updatedGridData)
+        // }
     }
 
     const handleResizeStop = (id: string) => {
@@ -64,6 +79,7 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
         //console.log('columnsOccupied', columnsOccupied)
         dispatch(updateItemInGridRowAC({ rowId, newFullRow: tempGridData }))
         dispatch(setCountLoadImgInGridAC())
+        dispatch(updateIncreaseValueAC(0))
     }
     const handleTop = () => {
         console.log('handleTop')
@@ -127,14 +143,6 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
     const moveItem = (fromOrder: number, toOrder: number) => {
         dispatch(moveItemAC({ rowId, fromOrder, toOrder }))
     }
-    // console.log(
-    //     'tempGridData',
-    //     tempGridData
-    //         .sort(
-    //             (a, b) => +a.gridArea.split('/')[1] - +b.gridArea.split('/')[1]
-    //         )
-    //         .map((el) => el.gridArea)
-    // )
     return (
         <>
             {tempGridData.map((item, index) => {
@@ -154,58 +162,14 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
                     )
                 }
                 return (
-                    <div
+                    <GridAreaItem
                         key={`GridDropItem.${item.id}.${index}`}
-                        style={{
-                            gridArea: item.gridArea,
-                            width: '100%',
-                            height: '100%',
-                        }}
-                    >
-                        <Resizable
-                            className={'gridItem'}
-                            size={{ width: '100%', height: '100%' }}
-                            style={{
-                                backgroundColor: item.backgroundColor,
-                                width: '100%',
-                                height: '100%',
-                            }}
-                            onResize={(event, direction, elementRef, delta) =>
-                                handleResize(delta, item.id)
-                            }
-                            onResizeStop={() => handleResizeStop(item.id)}
-                        >
-                            <AlignVertically
-                                key={`GridDropItem.${item.id}.${index}`}
-                                rowId={rowId}
-                                gridElId={item.id}
-                                order={item.order}
-                                gridAreaItem={item.gridArea}
-                                actions={['top', 'center', 'bottom']}
-                                properties={['start', 'center', 'end']}
-                                handleTop={() => handleTop()}
-                                handleBottom={() =>
-                                    handleBottom(rowId, item.id)
-                                }
-                                moveItem={moveItem}
-                            >
-                                {item.url && (
-                                    <img
-                                        src={item.url}
-                                        style={{
-                                            objectFit: 'contain',
-                                            width: '100%',
-                                            height: '100%',
-                                        }}
-                                        alt={'drag_img'}
-                                        onLoad={() => {
-                                            dispatch(setCountLoadImgInGridAC())
-                                        }}
-                                    />
-                                )}
-                            </AlignVertically>
-                        </Resizable>
-                    </div>
+                        {...item}
+                        rowId={rowId}
+                        //handleResize={handleResize}
+                        //handleResizeStop={handleResizeStop}
+                        moveItem={moveItem}
+                    />
                 )
             })}
         </>

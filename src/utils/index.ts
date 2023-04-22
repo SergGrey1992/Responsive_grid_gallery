@@ -1,5 +1,7 @@
+export * from './createGridItem'
 export * from './getClone'
 export * from './getColumnsPercent'
+export * from './getGridAreaValues'
 export * from './getLogBoxReduxToolkit'
 export * from './getRandomHexColor'
 export * from './getRandomImgUrl'

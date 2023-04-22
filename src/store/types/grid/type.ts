@@ -8,4 +8,7 @@ export type InitGridLayoutStateType = {
     rows: RowsType[]
     layouts: { [key: string]: ItemTypeWithOrder[] }
     imageData: ItemType[]
+    tempSettings: {
+        increaseValue: number
+    }
 }
