@@ -48,7 +48,6 @@ export const GridAreaItem = (
         gridArea: string
     }>(null)
 
-    console.log('gridArea', gridArea)
     useEffect(() => {
         setGridArea_(gridArea)
         setLastResizeData({ direction: 'right', gridArea: gridArea })
