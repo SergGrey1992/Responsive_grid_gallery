@@ -6,6 +6,7 @@ import { NumberSize } from 're-resizable'
 import { GAP, MIN_COLUMN } from '../../constants'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import {
+    changeAllData,
     setCountLoadImgInGridAC,
     testUpdateGridAreaAC,
 } from '../../store/reducers'
@@ -42,12 +43,23 @@ export const GridAreaItem = (
     const layouts = useAppSelector((state) => state.grid.layouts)
     const dispatch = useAppDispatch()
     const [gridArea_, setGridArea_] = useState(gridArea)
+    const [lastResizeData, setLastResizeData] = useState<null | {
+        direction: string
+        gridArea: string
+    }>(null)
+
     console.log('gridArea', gridArea)
     useEffect(() => {
         setGridArea_(gridArea)
+        setLastResizeData({ direction: 'right', gridArea: gridArea })
     }, [gridArea])
 
-    const checkRight = (currentPosition: number[], id: string) => {
+    const checkRight = (
+        lastPositionString: string,
+        currentPositionString: string,
+        id: string
+    ) => {
+        const currentPosition = currentPositionString.split('/').map(Number)
         let resultLayouts = {}
         const copyLayouts = { ...layouts }
 
@@ -56,13 +68,73 @@ export const GridAreaItem = (
         const startColumnPosition = currentPosition[1]
         const endColumnPosition = currentPosition[3]
 
-        console.log(copyLayouts, 'copyLayouts')
-
         Object.keys(copyLayouts).forEach((elKey) => {
+            let elementDefferenceWithCurrentElement = 0
             const rowLayout = copyLayouts[elKey]
 
-            const test = rowLayout.map((rowElement) => {})
+            let curentEl: any = null
+
+            const test = rowLayout.map((rowElement, i) => {
+                debugger
+                if (lastPositionString === rowElement.gridArea) {
+                    return { ...rowElement, gridArea: currentPositionString }
+                }
+
+                const elementPosition = rowElement.gridArea
+                    .split('/')
+                    .map(Number)
+
+                debugger
+                let startElementRowPosition = elementPosition[0]
+                const endElementRowPosition = elementPosition[2]
+                let startElementColumnPosition = elementPosition[1]
+                let endElementColumnPosition = elementPosition[3]
+
+                if (startElementRowPosition <= endRowPosition) {
+                    if (endColumnPosition >= startElementColumnPosition) {
+                        elementDefferenceWithCurrentElement =
+                            endColumnPosition - startElementColumnPosition
+
+                        if (elementDefferenceWithCurrentElement > 0) {
+                            startElementColumnPosition +=
+                                elementDefferenceWithCurrentElement
+                            endElementColumnPosition +=
+                                elementDefferenceWithCurrentElement
+                        }
+                    } else {
+                        const elArea = curentEl.gridArea.split('/').map(Number)
+
+                        debugger
+                        elementDefferenceWithCurrentElement =
+                            elArea[3] - startElementColumnPosition
+
+                        if (elementDefferenceWithCurrentElement > 0) {
+                            startElementColumnPosition +=
+                                elementDefferenceWithCurrentElement
+                            endElementColumnPosition +=
+                                elementDefferenceWithCurrentElement
+                        }
+                    }
+                }
+
+                const newGridArea111111 = `${startElementRowPosition}/${startElementColumnPosition}/${endElementRowPosition}/${endElementColumnPosition}`
+
+                curentEl = {
+                    ...rowElement,
+                    gridArea: newGridArea111111,
+                }
+
+                return {
+                    ...rowElement,
+                    gridArea: newGridArea111111,
+                }
+            })
+
+            // @ts-ignore
+            resultLayouts[elKey] = test
         })
+
+        dispatch(changeAllData(resultLayouts))
     }
 
     const onResize = (direction: any, delta: NumberSize, id: string) => {
@@ -84,7 +156,11 @@ export const GridAreaItem = (
             if (isMinSize) return
             arrValues[3] = arrValues[3] + increaseValue
             setGridArea_(arrValues.join('/'))
-            checkRight(arrValues, id)
+            setLastResizeData({
+                gridArea: gridArea,
+                ...lastResizeData,
+                direction: 'right',
+            })
             //console.log('handleResize => right')
         } else if (direction === 'bottom') {
             console.log('handleResize => bottom')
@@ -107,6 +183,9 @@ export const GridAreaItem = (
         //console.log('onResizeStop gridArea => ', gridArea)
         dispatch(testUpdateGridAreaAC({ rowId, id, gridArea: gridArea_ }))
         dispatch(setCountLoadImgInGridAC())
+        if (lastResizeData && lastResizeData.direction === 'right') {
+            checkRight(lastResizeData.gridArea, gridArea_, id)
+        }
     }
 
     return (

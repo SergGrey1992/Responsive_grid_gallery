@@ -36,6 +36,13 @@ const gridLayoutSlice = createSlice({
     name: 'GridLayout',
     initialState: initialGridLayoutState,
     reducers: {
+        changeAllData: (
+            state,
+            action: PayloadAction<{ [key: string]: ItemTypeWithOrder[] }>
+        ) => {
+            //const rowId = v1()
+            state.layouts = action.payload
+        },
         addGridRowAC: (state, action: PayloadAction<RowsType>) => {
             //const rowId = v1()
             state.layouts = {
@@ -254,4 +261,5 @@ export const {
     moveItemAC,
     updateIncreaseValueAC,
     testUpdateGridAreaAC,
+    changeAllData,
 } = gridLayoutSlice.actions
