@@ -48,7 +48,7 @@ export const DropSquare = () => {
                 const rowHeights = gridTemplateRows
                     .split(' ')
                     .map((h) => +h.replace('px', ''))
-                console.log('rowHeights', rowHeights)
+                //console.log('rowHeights', rowHeights)
                 dispatch(setMeasureRowsHeightAC(rowHeights))
             }
         }

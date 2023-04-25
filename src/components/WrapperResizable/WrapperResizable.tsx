@@ -42,8 +42,8 @@ export const WrapperResizable = ({
                 left: styles.handleComponentLeft,
             }}
             onResize={(event, direction, elementRef, delta) => {
-                console.log('delta', delta)
-                onResize(direction, delta, '')
+                //console.log('delta', delta)
+                onResize(direction, delta, id)
                 //handleResize(direction, delta.width, id)
             }}
             onResizeStop={onResizeStop}

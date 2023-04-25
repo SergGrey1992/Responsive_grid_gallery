@@ -38,13 +38,13 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
     const handleResize = (direction: Direction, delta: any, id: string) => {
         if (widthOneColumnRound === undefined) return
         if (direction === 'top') {
-            console.log('handleResize => top')
+            //console.log('handleResize => top')
         } else if (direction === 'right') {
-            console.log('handleResize => right')
+            //console.log('handleResize => right')
         } else if (direction === 'bottom') {
-            console.log('handleResize => bottom')
+            //console.log('handleResize => bottom')
         } else if (direction === 'left') {
-            console.log('handleResize => left')
+            //console.log('handleResize => left')
         }
 
         const increaseValue = Math.round(
@@ -127,7 +127,7 @@ export const GridCurrentRow = ({ gridRow, rowId }: GridCurrentRowPropsType) => {
                     dispatch(
                         updateGridAreaIncRowAC({ rowId, elId, newGridArea })
                     )
-                    console.log('newGridArea', newGridArea)
+                    //console.log('newGridArea', newGridArea)
                 }
                 setTimeout(() => {
                     dispatch(setCountLoadImgInGridAC())

@@ -18,7 +18,7 @@ export const GridDropItem = (props: GridDropItemProps) => {
     )
     const dispatch = useAppDispatch()
     const [tempIncreaseValue, setTempIncreaseValue] = useState(0)
-    console.log('tempIncreaseValue', tempIncreaseValue)
+    //console.log('tempIncreaseValue', tempIncreaseValue)
     const onResize = (delta: number) => {
         if (widthOneColumnRound) {
             setTempIncreaseValue(

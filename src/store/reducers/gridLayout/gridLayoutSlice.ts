@@ -224,6 +224,26 @@ const gridLayoutSlice = createSlice({
                 currentElement.gridArea = gridArea
             }
         },
+        testSetNewGridAreaAC: (
+            state,
+            action: PayloadAction<{
+                rowId: string
+                id: string
+                newGridArea: string
+            }>
+        ) => {
+            const { rowId, id, newGridArea } = action.payload
+            const currentEl = state.layouts[rowId].find((el) => el.id === id)
+            if (currentEl) {
+                currentEl.gridArea = newGridArea
+            }
+        },
+        testSetNewFullLayoutAC: (
+            state,
+            action: PayloadAction<{ [p: string]: ItemTypeWithOrder[] }>
+        ) => {
+            state.layouts = action.payload
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(addItemInGridRowTC.fulfilled, (state, action) => {
@@ -262,4 +282,6 @@ export const {
     updateIncreaseValueAC,
     testUpdateGridAreaAC,
     changeAllData,
+    testSetNewGridAreaAC,
+    testSetNewFullLayoutAC,
 } = gridLayoutSlice.actions
