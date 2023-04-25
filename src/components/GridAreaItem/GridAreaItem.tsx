@@ -47,7 +47,9 @@ export const GridAreaItem = (
     //     direction: string
     //     gridArea: string
     // }>(null)
+
     const grid = useWatchGridArea(gridArea_, id, rowId)
+
     useEffect(() => {
         //console.log(`order: ${order}, GRID => ${grid}`)
     }, [grid])

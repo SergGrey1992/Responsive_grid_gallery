@@ -59,23 +59,46 @@ export const getIntersectingElements = (
         currentEndRow,
         currentEndColumn,
     ] = getGridAreaValues(currentElement.gridArea)
-    console.log('currentElement.gridArea', currentElement.gridArea)
+
+    let rowsAfterCurrent = generateCross(+currentStartRow, +currentEndRow)
+
+    console.log(rowsAfterCurrent, 'columnsAfterCurrent')
+
+    console.log('currentElement', currentElement)
     const allElementsWithoutCurrentElement = allElements.filter(
-        (element) => !(element.id === currentElement.id)
+        (element) => element.id !== currentElement.id
     )
 
     const allElementsWithoutTopsElement =
         allElementsWithoutCurrentElement.filter((element) => {
             const [startRow, startColumn, endRow, endColumn] =
                 getGridAreaValues(element.gridArea)
-            return currentStartRow <= startRow
+
+            let rowsForElement: number[] = generateCross(startRow, endRow)
+
+            const crossing = getCrossingForArrays(
+                rowsAfterCurrent,
+                rowsForElement
+            )
+
+            // debugger
+            return crossing > 1
         })
-    //console.log('allElementsWithoutTopsElement', allElementsWithoutTopsElement)
+    console.log('allElementsWithoutTopsElement', allElementsWithoutTopsElement)
     const allElementsWithoutBottomElement =
         allElementsWithoutTopsElement.filter((element) => {
             const [startRow, startColumn, endRow, endColumn] =
                 getGridAreaValues(element.gridArea)
-            return currentStartRow === startRow || currentEndRow >= endRow
+
+            let rowsForElement: number[] = generateCross(startRow, endRow)
+
+            const crossing = getCrossingForArrays(
+                rowsAfterCurrent,
+                rowsForElement
+            )
+
+            // debugger
+            return crossing > 1
         })
     // console.log(
     //     'allElementsWithoutBottomElement',
@@ -110,6 +133,33 @@ export const getIntersectingElements = (
 
         return isIntersecting
     })
+}
+
+const getCrossingForArrays = (arr1: number[], arr2: number[]) => {
+    let cross = 0
+
+    arr1.forEach((el) => {
+        const isFound = arr2.find((el2) => el === el2)
+
+        isFound && cross++
+    })
+
+    return cross
+}
+
+const generateCross = (startRow: number, endRow: number) => {
+    let rows: number[] = []
+    debugger
+
+    let index = startRow
+
+    while (index <= endRow) {
+        rows.push(index)
+
+        index++
+    }
+
+    return rows
 }
 
 export function increaseGridAreaAndRecalculate(
