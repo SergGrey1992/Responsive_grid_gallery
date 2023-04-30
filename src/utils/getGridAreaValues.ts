@@ -1,5 +1,5 @@
 export const getGridAreaValues = (gridArea: string): number[] => {
-    return gridArea.split('/').map(Number)
+    return gridArea.split('/').map((el) => +el)
     // console.log('arrValues', arrValues)
     // console.log(
     //     'arrValues',

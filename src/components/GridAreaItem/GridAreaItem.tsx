@@ -147,12 +147,17 @@ export const GridAreaItem = (
             delta.width / (widthOneColumnRound + GAP)
         )
         const isNextRow = delta.height > GAP * 2
+        const isPrevRow = delta.height > GAP * 2
         //if (isNextRow)
-
+        console.log('isPrevRow', delta.height)
         //console.log('gridArea', gridArea)
         const arrValues = getGridAreaValues(gridArea)
         //console.log('arrValues', arrValues)
         if (direction === 'top') {
+            if (isPrevRow) {
+                arrValues[0] = arrValues[0] - 1
+                setGridArea_(arrValues.join('/'))
+            }
             //console.log('handleResize => top')
         } else if (direction === 'right') {
             const isMinSize =
@@ -238,14 +243,20 @@ export const GridAreaItem = (
                     moveItem={moveItem}
                 >
                     {url && (
-                        <img
-                            src={url}
-                            className={styles.imageGrid}
-                            alt={'drag_img'}
-                            onLoad={() => {
-                                dispatch(setCountLoadImgInGridAC())
-                            }}
-                        />
+                        <>
+                            <div className={styles.idItem}>{id}</div>
+                            <div className={styles.gridAreaText}>
+                                {gridArea}
+                            </div>
+                            <img
+                                src={url}
+                                className={styles.imageGrid}
+                                alt={'drag_img'}
+                                onLoad={() => {
+                                    dispatch(setCountLoadImgInGridAC())
+                                }}
+                            />
+                        </>
                     )}
                 </AlignVertically>
             </WrapperResizable>

@@ -37,3 +37,23 @@
     width: 100%;
     cursor: w-resize!important;
 }
+
+.idItem {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    background-color: crimson;
+    z-index: 100;
+}
+
+.gridAreaText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    padding: 3px 7px;
+    font-weight: 800;
+    background-color: crimson;
+    z-index: 100;
+}

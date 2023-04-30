@@ -17,7 +17,7 @@ export const resizerGrid = (
         allElements,
         direction
     )
-    //console.log('intersectingElements', intersectingElements)
+    console.log('intersectingElements', intersectingElements)
     // switch (direction) {
     //     case 'right': {
     //         const aaaa = getIntersectingElements(
