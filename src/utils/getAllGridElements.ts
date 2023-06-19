@@ -1,12 +1,17 @@
 import { ItemTypeWithOrder } from '../types/types'
 
+export type FullGridElementsType = ItemTypeWithOrder & { rowKey: string }
+
 export const getAllGridElements = (layouts: {
     [p: string]: ItemTypeWithOrder[]
-}): ItemTypeWithOrder[] => {
-    const fullGridElements: ItemTypeWithOrder[] = []
+}): FullGridElementsType[] => {
+    const fullGridElements: FullGridElementsType[] = []
+    console.log(layouts, 'layouts')
 
     Object.keys(layouts).forEach((rowKey) => {
-        fullGridElements.push(...layouts[rowKey])
+        layouts[rowKey].forEach((el) => {
+            fullGridElements.push({ ...el, rowKey: rowKey })
+        })
     })
 
     return fullGridElements

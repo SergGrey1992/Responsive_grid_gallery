@@ -14,12 +14,7 @@ import { InitGridLayoutStateType, RowsType } from '../../types'
 
 const FakeData: ItemType[] = [...Array(getRandomNumber(10, 20))].map((_) => ({
     id: v1(),
-    // url: getRandomImgUrl(
-    //     getRandomNumber(1, 3) * 100,
-    //     getRandomNumber(2, 3) * 100,
-    //     getRandomNumber(0, 100)
-    // ),
-    url: getRandomImgUrl(200, 200, getRandomNumber(0, 100)),
+    url: getRandomImgUrl(),
     backgroundColor: getRandomHexColor(),
 }))
 
@@ -41,8 +36,27 @@ const gridLayoutSlice = createSlice({
             state,
             action: PayloadAction<{ [key: string]: ItemTypeWithOrder[] }>
         ) => {
+            console.log(action.payload, 'dasdadasd')
             //const rowId = v1()
             state.layouts = action.payload
+        },
+        setNewGridArea: (
+            state,
+            action: PayloadAction<{
+                rowId: string
+                itemId: string
+                newGridArea: string
+            }>
+        ) => {
+            state.layouts = {
+                ...state.layouts,
+                [action.payload.rowId]: state.layouts[action.payload.rowId].map(
+                    (el) =>
+                        el.id === action.payload.itemId
+                            ? { ...el, gridArea: action.payload.newGridArea }
+                            : el
+                ),
+            }
         },
         addGridRowAC: (state, action: PayloadAction<RowsType>) => {
             //const rowId = v1()
@@ -55,27 +69,6 @@ const gridLayoutSlice = createSlice({
                 order: action.payload.order,
             })
         },
-        // addItemInGridRowAC: (
-        //     state,
-        //     action: PayloadAction<{
-        //         rowId: string
-        //         item: ItemTypeWithOrder
-        //     }>
-        // ) => {
-        //     const { rowId, item } = action.payload
-        //     if (rowId === '') return
-        //     const currentRow = state.rows.find((row) => row.id === rowId)
-        //     const lengthItemInGridRow = state.layouts[rowId].length
-        //     if (currentRow) {
-        //         const order = lengthItemInGridRow + 1
-        //         const area = MIN_COLUMN * lengthItemInGridRow
-        //         const girdArea = `${currentRow.order}/${area + 1}/${
-        //             currentRow.order + 1
-        //         }/${area + 1 + MIN_COLUMN}`
-        //         const item_ = createGridItem(item, order, girdArea)
-        //         state.layouts[rowId].push(item_)
-        //     }
-        // },
         updateItemInGridRowAC: (
             state,
             action: PayloadAction<{
@@ -94,7 +87,6 @@ const gridLayoutSlice = createSlice({
             }>
         ) => {
             const rowId = v1()
-            const length = state.rows.length + 1
             //создание новой строки в гриде
             state.rows.push({ id: rowId, order: state.rows.length + 1 })
             //все элементы из ROW
@@ -132,8 +124,6 @@ const gridLayoutSlice = createSlice({
                     }
                 }
             }
-
-            //
         },
         updateGridAreaIncRowAC: (
             state,
@@ -292,4 +282,5 @@ export const {
     testSetNewGridAreaAC,
     testSetNewFullLayoutAC,
     setFakeAC,
+    setNewGridArea,
 } = gridLayoutSlice.actions

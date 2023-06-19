@@ -19,6 +19,8 @@ export const GridRow = ({ countRows }: GridRowPropsType) => {
     const layoutsItems = useAppSelector((state) => state.grid.layouts)
     const activeIdRow = useAppSelector((state) => state.settings.activeIdRow)
 
+    console.log(layoutsItems, 'layoutsItems')
+
     const dispatch = useAppDispatch()
     const [{ canDrop, isOver }, drop] = useDrop<
         DropResult,
@@ -105,6 +107,8 @@ export const GridRow = ({ countRows }: GridRowPropsType) => {
                     (a, b) =>
                         +a.gridArea.split('/')[1] - +b.gridArea.split('/')[1]
                 )
+
+                console.log(a, 'a')
                 return (
                     <GridCurrentRow
                         key={`GridCurrentRow.${index}`}
