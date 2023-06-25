@@ -20,6 +20,7 @@ const FakeData: ItemType[] = [...Array(getRandomNumber(10, 20))].map((_) => ({
 
 const initialGridLayoutState: InitGridLayoutStateType = {
     rows: [],
+    reactLayout: [],
     layouts: {},
     layoutsFake: {},
     imageData: FakeData,
@@ -241,6 +242,25 @@ const gridLayoutSlice = createSlice({
         ) => {
             state.layouts = action.payload
         },
+        addLayout: (state, action) => {
+            state.reactLayout = [...state.reactLayout, action.payload]
+        },
+        changeLayout: (state, action) => {
+            state.reactLayout = state.reactLayout.map((l) => {
+                const lay = action.payload.find((a: any) => a.i === l.i)
+
+                if (lay) {
+                    return { ...l, ...lay }
+                }
+
+                return l
+            })
+        },
+        changeLayoutWidth: (state, action) => {
+            state.reactLayout = state.reactLayout.map((s) =>
+                s.i === action.payload.i ? { ...s, ...action.payload } : s
+            )
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(addItemInGridRowTC.fulfilled, (state, action) => {
@@ -283,4 +303,7 @@ export const {
     testSetNewFullLayoutAC,
     setFakeAC,
     setNewGridArea,
+    addLayout,
+    changeLayout,
+    changeLayoutWidth,
 } = gridLayoutSlice.actions

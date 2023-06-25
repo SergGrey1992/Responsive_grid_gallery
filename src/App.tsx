@@ -1,25 +1,19 @@
 import React from 'react'
 
-import {
-    AlertComponent,
-    ControlsGridLayout,
-    DropSquare,
-    HelpMonitor,
-    MediaLibrary,
-} from './components'
+import { MyFirstGrid } from './components'
 
 import './App.css'
 
 function App() {
     return (
         <div className="App">
-            <HelpMonitor />
-            <AlertComponent />
-            <ControlsGridLayout />
+            {/*<HelpMonitor />*/}
+            {/*<AlertComponent />*/}
+            {/*<ControlsGridLayout />*/}
             <div className={'dropSquareContainer'}>
-                <DropSquare />
+                <MyFirstGrid />
             </div>
-            <MediaLibrary />
+            {/*<MediaLibrary />*/}
             {/*<Layer />*/}
         </div>
     )

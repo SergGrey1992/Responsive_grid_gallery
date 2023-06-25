@@ -28,9 +28,7 @@ export const GridAreaItem = (
     const {
         id,
         gridArea,
-        backgroundColor,
         order,
-        type,
         url,
         rowId,
         //handleResize,

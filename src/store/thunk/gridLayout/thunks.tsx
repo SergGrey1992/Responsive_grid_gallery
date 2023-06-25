@@ -42,7 +42,6 @@ export const addItemInGridRowTC = createAsyncThunk<
                         activeColumn >= currPos &&
                         activeColumn + MIN_COLUMN - 1 <= nextPos
                     ) {
-                        //console.log(`Можно вставить на позицию ${activeColumn}`)
                         return { rowId: activeIdRow, activeColumn, item: data }
                     }
                 }

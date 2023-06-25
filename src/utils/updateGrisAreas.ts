@@ -23,13 +23,14 @@ export function updateGridAreas(
     const [curRowStart, curColStart, curRowEnd, curColEnd] = getGridAreaValues(
         currentEl.gridArea
     )
-    console.log('GRID_AREA =>', currentEl.gridArea)
+
     const newGridArea = `${curRowStart}/${curColStart}/${curRowEnd}/${
         curColEnd + increaseBy
     }`
     currentEl.gridArea = newGridArea
 
-    const allWithoutLeftElements = copyGrid
+    //получаем все элементы которые находятся справа от элемента который расширяется
+    const allWithRightElements = copyGrid
         .filter((el) => !(el.id === currentEl.id))
         .filter((el) => {
             const [rowStart, colStart, rowEnd, colEnd] = getGridAreaValues(
@@ -41,11 +42,12 @@ export function updateGridAreas(
     let initRowStart = curRowStart
     let initRowEnd = curRowEnd
 
-    const allWithCrossedElements = allWithoutLeftElements.filter((el) => {
+    const allWithCrossedElements = allWithRightElements.filter((el) => {
         let [rowStart, colStart, rowEnd, colEnd] = getGridAreaValues(
             el.gridArea
         )
 
+        //todo fix this check
         if (initRowStart > rowStart) {
             //увеличиваем диапозон вверх
             initRowStart = rowStart
@@ -69,9 +71,9 @@ export function updateGridAreas(
         allWithCrossedElements.map((el) => el.gridArea)
     )
 
-    let result: any = []
+    let resultEditedElements: any = []
 
-    let fsfs: any = {}
+    let allElementsByRows: any = {}
 
     allWithCrossedElements.forEach((el) => {
         let [rowStart, colStart, rowEnd, colEnd] = getGridAreaValues(
@@ -79,19 +81,26 @@ export function updateGridAreas(
         )
 
         if (
-            fsfs[rowStart] &&
-            fsfs[rowStart].items.find((i: any) => i.id === el.id)
+            allElementsByRows[rowStart] &&
+            allElementsByRows[rowStart].items.find((i: any) => i.id === el.id)
         ) {
             return
         }
 
-        if (fsfs[rowStart] && fsfs[rowStart].items.length) {
-            fsfs[rowStart] = {
+        if (
+            allElementsByRows[rowStart] &&
+            allElementsByRows[rowStart].items.length
+        ) {
+            allElementsByRows[rowStart] = {
                 curColEnd: curColEnd,
-                items: [...fsfs[rowStart].items, el],
+                items: [...allElementsByRows[rowStart].items, el],
+                resizeData: {
+                    isFull: false,
+                    canResizeIfFull: false,
+                },
             }
         } else {
-            const peresechenie = allWithCrossedElements.find((c) => {
+            const crossingElement = allWithCrossedElements.find((c) => {
                 let [rowStart1, colStart1, rowEnd1, colEnd1] =
                     getGridAreaValues(c.gridArea)
 
@@ -99,88 +108,249 @@ export function updateGridAreas(
                     return true
                 }
             })
-            if (peresechenie) {
-                if (peresechenie.gridArea === el.gridArea) {
-                    fsfs[rowStart] = {
+            if (crossingElement) {
+                if (crossingElement.gridArea === el.gridArea) {
+                    allElementsByRows[rowStart] = {
                         curColEnd: curColEnd,
                         items: [el],
+                        resizeData: {
+                            isFull: false,
+                            canResizeIfFull: false,
+                        },
                     }
                 } else {
-                    fsfs[rowStart] = {
+                    allElementsByRows[rowStart] = {
                         curColEnd: curColEnd,
-                        items: [peresechenie, el],
+                        items: [crossingElement, el],
+                        resizeData: {
+                            isFull: false,
+                            canResizeIfFull: false,
+                        },
                     }
                 }
             } else {
-                fsfs[rowStart] = {
+                allElementsByRows[rowStart] = {
                     curColEnd: curColEnd,
                     items: [el],
+                    isFull: false,
                 }
             }
         }
     })
 
-    console.log(fsfs, 'fsfs')
-    Object.keys(fsfs).map((el) => {
-        for (let i = 0; i < fsfs[el].items.length; i++) {
+    let returned = false
+
+    console.log(allElementsByRows, 'fsfs')
+    Object.keys(allElementsByRows).map((el) => {
+        const allRows = 60
+        let initialRow = 0
+
+        let resultRow = 0
+        let elementsWeCanResize = []
+
+        if (allElementsByRows[el].items.length) {
+            allElementsByRows[el].items.map((element: any, index: number) => {
+                let [rowStart, colStart, rowEnd, colEnd] = getGridAreaValues(
+                    element.gridArea
+                )
+
+                if (index == 0) {
+                    initialRow = colStart
+                }
+
+                const elementColumns = colEnd - colStart
+
+                resultRow += elementColumns
+
+                if (elementColumns > 10) {
+                    elementsWeCanResize.push(element.gridArea)
+                }
+            })
+        }
+
+        const availableRows = allRows - initialRow
+
+        if (availableRows - resultRow < 5) {
+            allElementsByRows[el].resizeData.isFull = true
+
+            if (elementsWeCanResize.length) {
+                allElementsByRows[el].resizeData.canResizeIfFull = true
+            }
+        }
+
+        for (let i = 0; i < allElementsByRows[el].items.length; i++) {
             let [rowStart, colStart, rowEnd, colEnd] = getGridAreaValues(
-                fsfs[el].items[i].gridArea
+                allElementsByRows[el].items[i].gridArea
             )
 
-            if (fsfs[rowStart].curColEnd < colStart) {
+            if (
+                allElementsByRows[el].resizeData.isFull &&
+                !allElementsByRows[el].resizeData.canResizeIfFull
+            ) {
+                returned = true
+                return
+            }
+
+            if (allElementsByRows[rowStart].curColEnd < colStart) {
                 continue
             }
 
-            colStart += increaseBy
+            console.log(allElementsByRows[el].resizeData.isFull, 'isFull')
+            console.log(
+                allElementsByRows[el].resizeData.canResizeIfFull,
+                'canResizeIfFull'
+            )
+
+            if (
+                allElementsByRows[el].resizeData.isFull &&
+                allElementsByRows[el].resizeData.canResizeIfFull
+            ) {
+                returned = false
+                const canResizeElement = colEnd - colStart
+
+                console.log(canResizeElement, 'canResizeElement')
+
+                if (canResizeElement > 10) {
+                    colStart = colStart + increaseBy
+
+                    const newGridArea = `${rowStart}/${colStart}/${rowEnd}/${colEnd}`
+
+                    const haveUpdatedElement = resultEditedElements.find(
+                        (el: any) =>
+                            el.id === allElementsByRows[rowStart].items[i].id
+                    )
+
+                    if (haveUpdatedElement) {
+                        continue
+                    } else {
+                        resultEditedElements.push({
+                            ...allElementsByRows[el].items[i],
+                            gridArea: newGridArea,
+                        })
+                    }
+                    console.log('colEnd=>', colEnd)
+
+                    for (let i = 1; i <= rowEnd; i++) {
+                        if (allElementsByRows[i]) {
+                            allElementsByRows[i].curColEnd = colEnd
+                        }
+                    }
+
+                    continue
+                }
+            }
+
+            console.log(colEnd, 'colEnd')
+
             colEnd += increaseBy
+
+            colStart += increaseBy
 
             const newGridArea = `${rowStart}/${colStart}/${rowEnd}/${colEnd}`
 
-            const rwr = result.find(
-                (el: any) => el.id === fsfs[rowStart].items[i].id
+            const haveUpdatedElement = resultEditedElements.find(
+                (el: any) => el.id === allElementsByRows[rowStart].items[i].id
             )
 
-            if (rwr) {
-                // result = result.map((res: any) =>
-                //     res.id === fsfs[el].items[i].id
-                //         ? { ...rwr, gridArea: newGridArea }
-                //         : res
-                // )
+            if (haveUpdatedElement) {
                 continue
             } else {
-                result.push({ ...fsfs[el].items[i], gridArea: newGridArea })
+                resultEditedElements.push({
+                    ...allElementsByRows[el].items[i],
+                    gridArea: newGridArea,
+                })
             }
             console.log('colEnd=>', colEnd)
 
             for (let i = 1; i <= rowEnd; i++) {
-                if (fsfs[i]) {
-                    fsfs[i].curColEnd = colEnd
+                if (allElementsByRows[i]) {
+                    allElementsByRows[i].curColEnd = colEnd
                 }
             }
-            // fsfs[rowStart].curColEnd = colEnd
-            //
-            // const endCol = rowEnd - rowStart
-            // console.log(endCol, ' endCol')
-            // if (fsfs[endCol]) {
-            //     fsfs[endCol].curColEnd = colEnd
-            // }
         }
     })
 
     console.log(copyGrid, 'copyGrid')
-    console.log(result, 'result')
+    console.log(resultEditedElements, 'resultEditedElements')
 
-    let obj: any = {}
+    return prepareGridForSave(
+        copyGrid,
+        returned,
+        resultEditedElements,
+        idToUpdate,
+        newGridArea
+    )
+}
+
+const prepareGridForSave = (
+    copyGrid: FullGridElementsType[],
+    returned: boolean,
+    resultEditedElements: any,
+    idToUpdate: any,
+    newGridArea: string
+) => {
+    let gridForSave: any = {}
 
     copyGrid.map((gridEl) => {
         console.log(gridEl, 'gridEl')
-        const editedElement = result.find((el: any) => el.id === gridEl.id)
+        console.log(returned, 'grid returned')
+        const editedElement = resultEditedElements.find(
+            (el: any) => el.id === gridEl.id
+        )
         console.log(editedElement, 'editedElement')
 
+        let [rowStart4, colStart4, rowEnd4, colEnd] = getGridAreaValues(
+            gridEl.gridArea
+        )
+        let fsdf = gridEl.gridArea
+        const fof = copyGrid
+            .filter((re: any) => {
+                let [rowStartre, colStartre, rowEndre, colEnd6re] =
+                    getGridAreaValues(re.gridArea)
+
+                //todo fix
+                if (rowStartre === rowStart4) {
+                    return true
+                }
+            })
+            .sort((s: any, a: any) => {
+                let [rowStartds, colStartres, rowEndres, colEnd6res] =
+                    getGridAreaValues(s.gridArea)
+
+                let [rowStartrea, colStartrea, rowEndrea, colEnd6rea] =
+                    getGridAreaValues(a.gridArea)
+
+                if (rowStartds > rowStartrea) {
+                    return -1
+                } else {
+                    return 1
+                }
+            })
+
+        console.log(fof, 'fof')
+        fof.forEach((r: any, index: number) => {
+            if (index < 1 || index > 1) {
+                return
+            }
+            let [rowStart, colStart, rowEnd, colEnd6] = getGridAreaValues(
+                r.gridArea
+            )
+
+            if (rowStart4 === rowStart) {
+                fsdf = `${rowStart4}/${colStart4}/${rowEnd4}/${colStart - 1}`
+                return
+            }
+        })
+
+        console.log(fsdf, 'new ')
+
         if (editedElement) {
-            if (obj[gridEl.rowKey] && obj[gridEl.rowKey].length) {
-                obj[gridEl.rowKey] = [
-                    ...obj[gridEl.rowKey],
+            if (
+                gridForSave[gridEl.rowKey] &&
+                gridForSave[gridEl.rowKey].length
+            ) {
+                gridForSave[gridEl.rowKey] = [
+                    ...gridForSave[gridEl.rowKey],
                     {
                         order: editedElement.order,
                         gridArea: editedElement.gridArea,
@@ -191,7 +361,7 @@ export function updateGridAreas(
                     },
                 ]
             } else {
-                obj[gridEl.rowKey] = [
+                gridForSave[gridEl.rowKey] = [
                     {
                         order: editedElement.order,
                         gridArea: editedElement.gridArea,
@@ -206,9 +376,14 @@ export function updateGridAreas(
         }
 
         if (gridEl.id === idToUpdate) {
-            if (obj[gridEl.rowKey] && obj[gridEl.rowKey].length) {
-                obj[gridEl.rowKey] = [
-                    ...obj[gridEl.rowKey],
+            if (
+                gridForSave[gridEl.rowKey] &&
+                gridForSave[gridEl.rowKey].length &&
+                !returned
+            ) {
+                console.log('gridEl1', gridForSave[gridEl.rowKey])
+                gridForSave[gridEl.rowKey] = [
+                    ...gridForSave[gridEl.rowKey],
                     {
                         order: gridEl.order,
                         gridArea: newGridArea,
@@ -218,8 +393,41 @@ export function updateGridAreas(
                         backgroundColor: gridEl.backgroundColor,
                     },
                 ]
-            } else {
-                obj[gridEl.rowKey] = [
+                return
+            } else if (
+                gridForSave[gridEl.rowKey] &&
+                gridForSave[gridEl.rowKey].length &&
+                returned
+            ) {
+                console.log('gridEl2', gridForSave[gridEl.rowKey])
+                gridForSave[gridEl.rowKey] = [
+                    ...gridForSave[gridEl.rowKey],
+                    {
+                        order: gridEl.order,
+                        gridArea: fsdf,
+                        type: gridEl.type,
+                        id: gridEl.id,
+                        url: gridEl.url,
+                        backgroundColor: gridEl.backgroundColor,
+                    },
+                ]
+                return
+            } else if (!gridForSave[gridEl.rowKey] && returned) {
+                console.log('gridEl3', gridForSave[gridEl.rowKey])
+                gridForSave[gridEl.rowKey] = [
+                    {
+                        order: gridEl.order,
+                        gridArea: fsdf,
+                        type: gridEl.type,
+                        id: gridEl.id,
+                        url: gridEl.url,
+                        backgroundColor: gridEl.backgroundColor,
+                    },
+                ]
+                return
+            } else if (!gridForSave[gridEl.rowKey] && !returned) {
+                console.log('gridEl4', gridForSave[gridEl.rowKey])
+                gridForSave[gridEl.rowKey] = [
                     {
                         order: gridEl.order,
                         gridArea: newGridArea,
@@ -229,14 +437,17 @@ export function updateGridAreas(
                         backgroundColor: gridEl.backgroundColor,
                     },
                 ]
+                return
             }
-            return
         }
 
         if (!editedElement && gridEl.id !== idToUpdate) {
-            if (obj[gridEl.rowKey] && obj[gridEl.rowKey].length) {
-                obj[gridEl.rowKey] = [
-                    ...obj[gridEl.rowKey],
+            if (
+                gridForSave[gridEl.rowKey] &&
+                gridForSave[gridEl.rowKey].length
+            ) {
+                gridForSave[gridEl.rowKey] = [
+                    ...gridForSave[gridEl.rowKey],
                     {
                         order: gridEl.order,
                         gridArea: gridEl.gridArea,
@@ -247,7 +458,7 @@ export function updateGridAreas(
                     },
                 ]
             } else {
-                obj[gridEl.rowKey] = [
+                gridForSave[gridEl.rowKey] = [
                     {
                         order: gridEl.order,
                         gridArea: gridEl.gridArea,
@@ -258,9 +469,8 @@ export function updateGridAreas(
                     },
                 ]
             }
-            return
         }
     })
 
-    return obj
+    return gridForSave
 }
