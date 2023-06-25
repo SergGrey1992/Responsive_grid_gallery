@@ -98,7 +98,7 @@ export const MyFirstGrid = () => {
         <div>
             <MediaLibrary targetRef={ref} />
             <GridLayout
-                style={{ backgroundColor: 'lightgray' }}
+                style={{ backgroundColor: 'lightgray', minHeight: '150px' }}
                 className="layout"
                 layout={layout}
                 cols={12}
