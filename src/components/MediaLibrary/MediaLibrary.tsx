@@ -8,13 +8,18 @@ import styles from './MediaLibrary.module.css'
 
 interface MediaLibraryPropsType {
     targetRef: any
+    selectedElements: string[]
 }
 
 export const MediaLibrary = ({
     targetRef,
+    selectedElements,
 }: PropsWithChildren<MediaLibraryPropsType>) => {
-    const imageData = useAppSelector((state) => state.grid.imageData)
-
+    console.log('selectedElements', selectedElements)
+    const imageData = useAppSelector((state) => state.grid.imageData).filter(
+        (el) => !selectedElements.includes(el.id)
+    )
+    console.log('imageData', imageData.length)
     return (
         <div className={styles.dragItemsContainer}>
             {imageData.map((el, index) => {

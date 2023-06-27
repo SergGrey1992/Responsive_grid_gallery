@@ -6,17 +6,26 @@ import { ItemType, ItemTypeWithOrder } from '../../../types/types'
 import {
     createGridItem,
     getRandomHexColor,
-    getRandomImgUrl,
     getRandomNumber,
 } from '../../../utils'
 import { addItemInGridRowTC } from '../../thunk'
 import { InitGridLayoutStateType, RowsType } from '../../types'
 
-const FakeData: ItemType[] = [...Array(getRandomNumber(10, 20))].map((_) => ({
-    id: v1(),
-    url: getRandomImgUrl(),
-    backgroundColor: getRandomHexColor(),
-}))
+const url = [
+    'https://snakkstudio.com/_next/image?url=https%3A%2F%2Fsnakkstudio.s3.us-west-1.amazonaws.com%2FProject_Moncler_X_Document_4x3_6_b8093a9946.jpeg&w=3840&q=75', //4/3
+    'https://images.unsplash.com/photo-1558637845-c8b7ead71a3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8MTYlM0E5fGVufDB8fDB8fHww&w=1000&q=80', //16/9
+    'https://images.unsplash.com/photo-1597573337211-e1080012b84b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8OSUzQTE2fGVufDB8fDB8fHww&w=1000&q=80', //9/16
+    'https://g2.img-dpreview.com/81C81CB44922409EA3C99FA3E42369CD.jpg', //1/1
+]
+
+const FakeData: ItemType[] = [...Array(getRandomNumber(10, 20))].map(
+    (_, index) => ({
+        id: v1(),
+        //url: getRandomImgUrl(),
+        url: url[index % url.length],
+        backgroundColor: getRandomHexColor(),
+    })
+)
 
 const initialGridLayoutState: InitGridLayoutStateType = {
     rows: [],
