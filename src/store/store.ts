@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 
+import { flexReducer } from './reducers/flexLayoutBeta/flexLayoutBeta'
 import { gridLayoutReducer, settingsReducer } from './reducers'
 
 const rootReducer = combineReducers({
     grid: gridLayoutReducer,
     settings: settingsReducer,
+    flex: flexReducer,
 })
 
 const store = configureStore({

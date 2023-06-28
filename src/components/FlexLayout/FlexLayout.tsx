@@ -171,6 +171,7 @@ export const FlexLayout = ({}: PropsWithChildren<FlexLayoutPropsType>) => {
                                                     >
                                                         {el.url ? (
                                                             <img
+                                                                width={'100%'}
                                                                 src={el.url}
                                                                 alt={'123'}
                                                                 style={{
