@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import { Center } from '@chakra-ui/react'
 
+// import { Center } from '@chakra-ui/react'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { setActiveIdRowAC, setActiveIndexRowAC } from '../../store/reducers'
 
@@ -84,15 +84,15 @@ const GridRowHeight = ({ index, row }: GridRowHeightPropsType) => {
             onDragLeave={() => handleMouseLeave()}
             //onMouseMove={setActiveIndex}
         >
-            <Center
-                h={'100%'}
+            <div
+                //h={'100%'}
                 color={'rgba(194, 199, 222, 1)'}
                 //fontSize={activeIdRow === rows[index].id ? 30 : 20}
             >
                 {`ROW ${index + 1}`}
                 {`id: ${rows[index].id}`}
                 {/*{`h: ${row}`}*/}
-            </Center>
+            </div>
         </div>
     )
 }

@@ -251,13 +251,14 @@ const ImageData = () => {
 
         // free memory when ever this component is unmounted
         return () => {
-            // URL.revokeObjectURL(objectUrl)
-            // fileList.forEach((file)=>{
-            //     URL.revokeObjectURL(file)
-            // })
+            //URL.revokeObjectURL(objectUrl)
+            imgList.forEach((file) => {
+                URL.revokeObjectURL(file)
+            })
         }
     }, [fileList?.length])
     //console.log('imgList', imgList)
+
     return (
         <div className={styles.imageData}>
             <div>
