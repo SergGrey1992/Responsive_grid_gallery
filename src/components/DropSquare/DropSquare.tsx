@@ -150,7 +150,7 @@ export const MyFirstGrid = () => {
             })}
             <MediaLibrary targetRef={ref} selectedElements={selectedElements} />
             <Grid
-                style={{ backgroundColor: 'lightgray', minHeight: '100px' }}
+                style={{ backgroundColor: 'lightgray', minHeight: '70vh' }}
                 className="layout"
                 layout={layout}
                 cols={COLS}
@@ -188,7 +188,7 @@ export const MyFirstGrid = () => {
                             isResizable: true,
                             i: data.id,
                             content: data.url,
-                            w: 1,
+                            w: 10,
                             h: 1,
                         }
                         //debugger

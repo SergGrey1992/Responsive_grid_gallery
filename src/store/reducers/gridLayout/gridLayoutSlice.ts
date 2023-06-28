@@ -9,13 +9,13 @@ import {
     getRandomNumber,
 } from '../../../utils'
 import { addItemInGridRowTC } from '../../thunk'
-import { InitGridLayoutStateType, RowsType } from '../../types'
+import { InitGridLayoutStateType, PositionInCell, RowsType } from '../../types'
 
-const url = [
-    'https://snakkstudio.com/_next/image?url=https%3A%2F%2Fsnakkstudio.s3.us-west-1.amazonaws.com%2FProject_Moncler_X_Document_4x3_6_b8093a9946.jpeg&w=3840&q=75', //4/3
+export const url = [
+    // 'https://snakkstudio.com/_next/image?url=https%3A%2F%2Fsnakkstudio.s3.us-west-1.amazonaws.com%2FProject_Moncler_X_Document_4x3_6_b8093a9946.jpeg&w=3840&q=75', //4/3
+    'https://g2.img-dpreview.com/81C81CB44922409EA3C99FA3E42369CD.jpg', //1/1
     'https://images.unsplash.com/photo-1558637845-c8b7ead71a3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8MTYlM0E5fGVufDB8fDB8fHww&w=1000&q=80', //16/9
     'https://images.unsplash.com/photo-1597573337211-e1080012b84b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8OSUzQTE2fGVufDB8fDB8fHww&w=1000&q=80', //9/16
-    'https://g2.img-dpreview.com/81C81CB44922409EA3C99FA3E42369CD.jpg', //1/1
 ]
 
 const FakeData: ItemType[] = [...Array(getRandomNumber(10, 20))].map(
@@ -30,6 +30,13 @@ const FakeData: ItemType[] = [...Array(getRandomNumber(10, 20))].map(
 const initialGridLayoutState: InitGridLayoutStateType = {
     rows: [],
     reactLayout: [],
+    flexLayout: [
+        [
+            { id: '1', url: '', positionInCell: 'flex-start' },
+            { id: '2', url: '', positionInCell: 'flex-start' },
+            { id: '3', url: '', positionInCell: 'flex-start' },
+        ],
+    ],
     layouts: {},
     layoutsFake: {},
     imageData: FakeData,
@@ -270,6 +277,67 @@ const gridLayoutSlice = createSlice({
                 s.i === action.payload.i ? { ...s, ...action.payload } : s
             )
         },
+        //flex layout
+        addRowInFlexLayout: (state) => {
+            state.flexLayout.push([
+                { id: '1', url: '', positionInCell: 'flex-start' },
+                { id: '2', url: '', positionInCell: 'flex-start' },
+                { id: '3', url: '', positionInCell: 'flex-start' },
+            ])
+        },
+        addItemInFlexLayoutRow: (state, action: PayloadAction<number>) => {
+            const index = action.payload
+            const newId = new Date().getTime() + ''
+            state.flexLayout[index].push({
+                id: newId,
+                url: '',
+                positionInCell: 'flex-start',
+            })
+        },
+        removeItemInFlexLayoutRow: (
+            state,
+            action: PayloadAction<{ rowIndex: number; itemId: string }>
+        ) => {
+            const { rowIndex, itemId } = action.payload
+            const row = state.flexLayout[rowIndex]
+            const index = row.findIndex((t) => t.id === itemId)
+            if (index > -1) {
+                row.splice(index, 1)
+                if (row.length === 0) {
+                    state.flexLayout.splice(rowIndex, 1)
+                }
+            }
+        },
+        addUrlInItemFlexLayoutRow: (
+            state,
+            action: PayloadAction<{
+                rowIndex: number
+                itemId: string
+                url: string
+            }>
+        ) => {
+            const { rowIndex, itemId, url } = action.payload
+            const row = state.flexLayout[rowIndex]
+            const el = row.find((t) => t.id === itemId)
+            if (el) {
+                el.url = url
+            }
+        },
+        updatePositionInCellInFlexLayoutRow: (
+            state,
+            action: PayloadAction<{
+                rowIndex: number
+                itemId: string
+                positionInCell: PositionInCell
+            }>
+        ) => {
+            const { rowIndex, itemId, positionInCell } = action.payload
+            const row = state.flexLayout[rowIndex]
+            const el = row.find((t) => t.id === itemId)
+            if (el) {
+                el.positionInCell = positionInCell
+            }
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(addItemInGridRowTC.fulfilled, (state, action) => {
@@ -315,4 +383,10 @@ export const {
     addLayout,
     changeLayout,
     changeLayoutWidth,
+    //FlexLayout
+    addRowInFlexLayout,
+    addItemInFlexLayoutRow,
+    removeItemInFlexLayoutRow,
+    addUrlInItemFlexLayoutRow,
+    updatePositionInCellInFlexLayoutRow,
 } = gridLayoutSlice.actions

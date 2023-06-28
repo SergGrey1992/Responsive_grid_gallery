@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { MyFirstGrid } from './components'
+import { FlexLayout } from './components/FlexLayout/FlexLayout'
 
 import './App.css'
 
@@ -11,7 +11,9 @@ function App() {
             {/*<AlertComponent />*/}
             {/*<ControlsGridLayout />*/}
             <div className={'dropSquareContainer'}>
-                <MyFirstGrid />
+                {/*<MyFirstGrid />*/}
+                <FlexLayout />
+                {/*<FlexLayout />*/}
             </div>
             {/*<MediaLibrary />*/}
             {/*<Layer />*/}

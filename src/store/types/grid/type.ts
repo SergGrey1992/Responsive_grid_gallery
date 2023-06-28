@@ -16,9 +16,18 @@ export interface ReactLayoutType extends Layout {
     content: string
 }
 
+export type PositionInCell = 'center' | 'flex-end' | 'flex-start'
+
+type ItemLayoutType = {
+    id: string
+    url: string
+    positionInCell: PositionInCell
+}
+
 export type InitGridLayoutStateType = {
     rows: RowsType[]
     reactLayout: ReactLayoutType[]
+    flexLayout: ItemLayoutType[][]
     layouts: { [key: string]: ItemTypeWithOrder[] }
     layoutsFake: { [key: string]: string[] }
     imageData: ItemType[]
