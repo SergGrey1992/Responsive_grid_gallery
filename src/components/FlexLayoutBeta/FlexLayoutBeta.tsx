@@ -3,25 +3,36 @@ import React, { useEffect, useState } from 'react'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 
 import { useAppDispatch, useAppSelector } from '../../hooks'
-import { addRowInFlexLayout } from '../../store/reducers'
-import { NODETYPE } from '../../store/reducers/flexLayoutBeta/flexLayoutBeta'
+import {
+    addItemInRowFlexBeta,
+    addNewRowFlexBeta,
+    addUrlItemInRowFlexBeta,
+    divideItemInRowFlexBeta,
+    NodeType,
+    removeItemInRowFlexBeta,
+} from '../../store/reducers/flexLayoutBeta/flexLayoutBeta'
 
 import styles from './styles.module.css'
 
 interface FlexLayoutPropsType {}
 
-export default function ResizeHandle({
-    className = '',
-    id,
-}: {
+type ResizeHandlePropsType = {
     className?: string
     id?: string
-}) {
+    index?: number
+}
+
+export function ResizeHandle({
+    className = '',
+    id,
+    index,
+}: ResizeHandlePropsType) {
     return (
         <PanelResizeHandle
             className={[styles.ResizeHandleOuter, className].join(' ')}
             id={id}
         >
+            {/*{index}*/}
             <div className={styles.ResizeHandleInner}>
                 <svg className={styles.Icon} viewBox="0 0 24 24">
                     <path
@@ -41,63 +52,215 @@ const data = [
 ]
 
 //<PanelGroup autoSaveId="example" direction={"vertical"}>
-function renderLayout(node: NODETYPE) {
-    if (node.children == null) return
 
+// type WrapperPropsType = {
+//     children: NODETYPE
+// }
+//
+// const Wrapper = ({ children }: WrapperPropsType) => {
+//     return (
+//         <React.Fragment
+//         // key={`Wrapper.${index}`}
+//         >
+//             <Panel className={styles.Panel}>
+//                 <PanelGroup
+//                     //id={`PanelGroup.${index}.${n.direction}`}
+//                     direction={children.direction}
+//                     //style={{ overflow: 'initial!important' }}
+//                 >
+//                     {renderLayout(children)}
+//                 </PanelGroup>
+//             </Panel>
+//             {/*<ResizeHandle />*/}
+//             {/*PanelGroup: {n.id}*/}
+//             {children.children ? <ResizeHandle /> : null}
+//         </React.Fragment>
+//     )
+// }
+
+type RenderLayoutPropsType = {
+    node: NodeType
+    dispatch: any
+}
+
+function RenderLayout({ node, dispatch }: RenderLayoutPropsType) {
+    //console.log('node', node)
+    //const dispatch = useAppDispatch()
+    //const activeId = useAppSelector((state) => state.flex.activeId)
+    if (!Array.isArray(node.children)) return undefined
+    if (Array.isArray(node.children) && node.children.length === 0) {
+        return <div className={styles.emptyBox}>Empty</div>
+    }
     return node.children.map((n, index, array) => {
-        renderLayout(n)
-
-        if (n.root && !(n.direction === 'none')) {
-            //renderLayout(n)
+        if (Array.isArray(n.children) && n.direction) {
             return (
-                <PanelGroup
-                    id={`PanelGroup.${index}.${n.direction}`}
-                    direction={n.direction}
-                    key={`L.${index}`}
-                >
-                    {renderLayout(n)}
-                </PanelGroup>
+                <React.Fragment key={`Wrapper.${index}`}>
+                    {index > 0 && (
+                        <ResizeHandle className={styles.resizeHandleWrapper} />
+                    )}
+                    <Panel className={styles.Panel}>
+                        <PanelGroup direction={n.direction}>
+                            {RenderLayout({ node: n, dispatch })}
+                        </PanelGroup>
+                    </Panel>
+                </React.Fragment>
             )
         }
+        const removeItem = () => {
+            dispatch(removeItemInRowFlexBeta(n))
+        }
+        const divideItem = () => {
+            dispatch(divideItemInRowFlexBeta(n))
+        }
+        // const changeItemActiveId = () => {
+        //     console.log(activeId === n.id)
+        //     dispatch(
+        //         setActiveItemId(
+        //             //@ts-ignore
+        //             activeId === n.children.url ? '' : n.children.url
+        //         )
+        //     )
+        // }
 
-        //console.log(n.id)
+        // const swapItemsForActiveId = () => {
+        //     //@ts-ignore
+        //     dispatch(setSwapItemsForActiveId(n.children.url))
+        // }
+
         return (
-            <>
+            <React.Fragment key={`Wrapper.${index}`}>
+                {index > 0 && (
+                    <ResizeHandle
+                        className={styles.resizeHandleWrapper}
+                        //@ts-ignore
+                        index={+n.children.url}
+                    />
+                )}
+
                 <Panel key={`L.${index}`} className={styles.Panel}>
                     <div className={styles.PanelContent}>
-                        <img
-                            width={'100%'}
-                            src={
-                                'https://img.freepik.com/free-photo/a-cupcake-with-a-strawberry-on-top-and-a-strawberry-on-the-top_1340-35087.jpg'
-                            }
-                            alt=""
-                        />
+                        <div className={styles.del}>
+                            <button onClick={removeItem}>del</button>
+                        </div>
+                        <div className={styles.divideBox}>
+                            <button onClick={divideItem}>divide</button>
+                        </div>
+                        {/*<div className={styles.swapperBox}>*/}
+                        {/*    {!activeId && (*/}
+                        {/*        <button onClick={changeItemActiveId}>*/}
+                        {/*            swap*/}
+                        {/*        </button>*/}
+                        {/*    )}*/}
+                        {/*    {!(activeId === n.id) && (*/}
+                        {/*        <button onClick={swapItemsForActiveId}>*/}
+                        {/*            swap!!!!*/}
+                        {/*        </button>*/}
+                        {/*    )}*/}
+                        {/*</div>*/}
+                        {/*//@ts-ignore*/}
+                        {n.children.url === null ? (
+                            <div
+                                className={styles.emptyImgBox}
+                                onDrop={(e) => {
+                                    const data =
+                                        e.dataTransfer.getData('text_file')
+
+                                    console.log('data', data)
+                                    dispatch(
+                                        addUrlItemInRowFlexBeta({
+                                            id: n.id,
+                                            url: data,
+                                        })
+                                    )
+                                }}
+                                onDragOver={(e) => {
+                                    e.preventDefault()
+                                }}
+                            >
+                                <div>Empty img</div>
+                                <div>{n.id}</div>
+                            </div>
+                        ) : (
+                            <div>
+                                <div>{n.id}</div>
+                                <img
+                                    width={'100%'}
+                                    src={
+                                        //@ts-ignore
+                                        n.children.url
+                                    }
+                                    alt=""
+                                />
+                            </div>
+                        )}
                     </div>
                 </Panel>
-                {node.children![index + 1] && <ResizeHandle />}
-            </>
+                {/*{index === array.length - 1 && (*/}
+                {/*    <ResizeHandle className={styles.resizeHandleWrapper} />*/}
+                {/*)}*/}
+            </React.Fragment>
         )
     })
 }
-
 export const FlexLayoutBeta = ({}: PropsWithChildren<FlexLayoutPropsType>) => {
     const layout = useAppSelector((state) => state.flex.layout)
+    const root = useAppSelector((state) => state.flex.root)
     const dispatch = useAppDispatch()
+
     const addRow = () => {
-        dispatch(addRowInFlexLayout())
+        dispatch(addNewRowFlexBeta())
     }
     //console.log('layout', layout)
     return (
         <div className={styles.ContainerLayout}>
             <div className={styles.Container}>
                 <div className={styles.BottomRow}>
-                    <PanelGroup direction={'vertical'}>
-                        {renderLayout(layout)}
-                    </PanelGroup>
+                    <RenderRootLayoutFlexBeta layout={layout} />
+                </div>
+                <div>
+                    <button onClick={addRow}>add Row</button>
                 </div>
             </div>
             <ImageData />
         </div>
+    )
+}
+
+type RenderRootLayoutFlexBetaType = {
+    layout: NodeType[]
+}
+
+const RenderRootLayoutFlexBeta = ({ layout }: RenderRootLayoutFlexBetaType) => {
+    const dispatch = useAppDispatch()
+    return (
+        <>
+            {layout.map((row, index) => {
+                const addItemInRow = () => {
+                    if (Array.isArray(row.children) && row.children.length >= 6)
+                        return
+                    dispatch(addItemInRowFlexBeta(row.id))
+                }
+                return (
+                    <PanelGroup
+                        key={`PanelGroup.${index}`}
+                        autoSaveId={`example.${index}`}
+                        direction={'horizontal'}
+                        className={styles.MainRow}
+                    >
+                        <div className={styles.ButtonRowAddItem}>
+                            {!(
+                                Array.isArray(row.children) &&
+                                row.children.length >= 6
+                            ) && (
+                                <button onClick={addItemInRow}>add item</button>
+                            )}
+                        </div>
+
+                        {RenderLayout({ node: row, dispatch })}
+                    </PanelGroup>
+                )
+            })}
+        </>
     )
 }
 
@@ -131,31 +294,48 @@ const ImageData = () => {
         }
     }, [fileList?.length])
     //console.log('imgList', imgList)
-
+    const [isOpen, setIsOpen] = useState(true)
     return (
         <div className={styles.imageData}>
-            <div>
-                <input type="file" multiple onChange={onChangeFile} />
+            <div className={styles.imageLibOpener}>
+                <button
+                    onClick={() => {
+                        setIsOpen(!isOpen)
+                    }}
+                >
+                    opener
+                </button>
             </div>
-            <div className={styles.imagesPreview}>
-                {imgList.map((file, index) => {
-                    return (
-                        <div key={`img.${index}`}>
-                            <img
-                                src={file}
-                                alt=""
-                                draggable
-                                onDragStart={(ev) => {
-                                    console.log('onDrag')
-                                    //ev.preventDefault()
-                                    ev.stopPropagation()
-                                    ev.dataTransfer.setData('text_file', file)
-                                }}
-                            />
-                        </div>
-                    )
-                })}
-            </div>
+
+            {isOpen && (
+                <>
+                    <div>
+                        <input type="file" multiple onChange={onChangeFile} />
+                    </div>
+                    <div className={styles.imagesPreview}>
+                        {imgList.map((file, index) => {
+                            return (
+                                <div key={`img.${index}`}>
+                                    <img
+                                        src={file}
+                                        alt=""
+                                        draggable
+                                        onDragStart={(ev) => {
+                                            console.log('onDrag')
+                                            //ev.preventDefault()
+                                            ev.stopPropagation()
+                                            ev.dataTransfer.setData(
+                                                'text_file',
+                                                file
+                                            )
+                                        }}
+                                    />
+                                </div>
+                            )
+                        })}
+                    </div>
+                </>
+            )}
         </div>
     )
 }
