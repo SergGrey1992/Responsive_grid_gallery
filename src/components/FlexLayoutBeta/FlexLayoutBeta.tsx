@@ -58,108 +58,79 @@ function RenderLayout({ node, dispatch }: RenderLayoutPropsType) {
         return <div className={styles.emptyBox}>Empty</div>
     }
     return node.children.map((n, index, array) => {
-        if (Array.isArray(n.children) && n.direction) {
-            //console.log('12312', n.children.length)
-            return (
-                <React.Fragment key={`Wrapper.${index}`}>
-                    {/*{index > 0 && (*/}
-                    {/*    <ResizeHandle*/}
-                    {/*        //id={n.id + index + 'test'}*/}
-                    {/*        className={styles.resizeHandleWrapper}*/}
-                    {/*    />*/}
-                    {/*)}*/}
-                    {/*<ResizeHandle className={styles.resizeHandleGreen} />*/}
-                    <Panel className={styles.PanelGroup}>
-                        <PanelGroup direction={n.direction}>
-                            {RenderLayout({ node: n, dispatch })}
-                        </PanelGroup>
-                    </Panel>
-                    {!(array.length - 1 === index) && (
-                        <ResizeHandle className={styles.resizeHandleRed} />
-                    )}
-                </React.Fragment>
-            )
-        }
+        //console.log('12312', n.children.length)
         const removeItem = () => {
             dispatch(removeItemInRowFlexBeta(n))
         }
         const divideItem = () => {
             dispatch(divideItemInRowFlexBeta(n))
         }
-        //@ts-ignore
-        //console.log('node', node.children)
         return (
             <React.Fragment key={`Wrapper.${index}`}>
                 {/*{index > 0 && (*/}
-                {/*<ResizeHandle className={styles.resizeHandleGold} />*/}
-
-                {/*{index > 0 && (*/}
                 {/*    <ResizeHandle*/}
-                {/*        //id={node.id}*/}
+                {/*        //id={n.id + index + 'test'}*/}
                 {/*        className={styles.resizeHandleWrapper}*/}
                 {/*    />*/}
                 {/*)}*/}
-                {/*{index > 0 && (*/}
-                {/*    <ResizeHandle className={styles.resizeHandleBlue} />*/}
-                {/*)}*/}
-                {/*<ResizeHandle className={styles.resizeHandleBlue} />*/}
-                <Panel
-                    key={`L.${index}`}
-                    className={styles.Panel}
-                    onResize={(size) => {
-                        //console.log('size', size)
-                    }}
-                >
-                    <div className={styles.PanelContent}>
-                        <div className={styles.del}>
-                            <button onClick={removeItem}>del</button>
-                        </div>
-                        <div className={styles.divideBox}>
-                            <button onClick={divideItem}>divide</button>
-                        </div>
-                        {/*//@ts-ignore*/}
-                        {n.children.url === null ? (
-                            <div
-                                className={styles.emptyImgBox}
-                                onDrop={(e) => {
-                                    const data =
-                                        e.dataTransfer.getData('text_file')
-
-                                    console.log('data', data)
-                                    dispatch(
-                                        addUrlItemInRowFlexBeta({
-                                            id: n.id,
-                                            url: data,
-                                        })
-                                    )
-                                }}
-                                onDragOver={(e) => {
-                                    e.preventDefault()
-                                }}
-                            >
-                                <div>Empty img</div>
-                                {/*<div>{n.id}</div>*/}
-                            </div>
+                {/*<ResizeHandle className={styles.resizeHandleGreen} />*/}
+                <Panel className={styles.PanelGroup}>
+                    <PanelGroup direction={n.direction || 'horizontal'}>
+                        {Array.isArray(n.children) ? (
+                            n.direction && RenderLayout({ node: n, dispatch })
                         ) : (
-                            <div>
-                                {/*<div>{n.id}</div>*/}
-                                <img
-                                    width={'100%'}
-                                    src={
-                                        //@ts-ignore
-                                        n.children.url
-                                    }
-                                    alt=""
-                                />
+                            <div className={styles.PanelContent}>
+                                <div className={styles.del}>
+                                    <button onClick={removeItem}>del</button>
+                                </div>
+                                <div className={styles.divideBox}>
+                                    <button onClick={divideItem}>divide</button>
+                                </div>
+                                {/*//@ts-ignore*/}
+                                {n.children.url === null ? (
+                                    <div
+                                        className={styles.emptyImgBox}
+                                        onDrop={(e) => {
+                                            const data =
+                                                e.dataTransfer.getData(
+                                                    'text_file'
+                                                )
+
+                                            console.log('data', data)
+                                            dispatch(
+                                                addUrlItemInRowFlexBeta({
+                                                    id: n.id,
+                                                    url: data,
+                                                })
+                                            )
+                                        }}
+                                        onDragOver={(e) => {
+                                            e.preventDefault()
+                                        }}
+                                    >
+                                        <div>Empty img</div>
+                                        {/*<div>{n.id}</div>*/}
+                                    </div>
+                                ) : (
+                                    <div>
+                                        {/*<div>{n.id}</div>*/}
+                                        <img
+                                            width={'100%'}
+                                            src={
+                                                //@ts-ignore
+                                                n.children.url
+                                            }
+                                            alt=""
+                                        />
+                                    </div>
+                                )}
                             </div>
                         )}
-                    </div>
+                    </PanelGroup>
                 </Panel>
                 {!(array.length - 1 === index) && (
                     <ResizeHandle className={styles.resizeHandleRed} />
                 )}
-
-                {/*<ResizeHandle className={styles.resizeHandleRed} />*/}
             </React.Fragment>
         )
     })
