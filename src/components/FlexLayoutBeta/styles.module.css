@@ -23,16 +23,19 @@
     row-gap: 20px;
     display: flex;
     flex-direction: column;
-    /*overflow: auto;*/
+    overflow: auto;
 }
 
 .Panel {
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow: initial!important;
+    /*overflow: initial!important;*/
 }
 
+.PanelGroup {
+    border: 1px solid white;
+}
 
 .PanelContent {
     position: relative;
@@ -112,6 +115,18 @@
 }
 .resizeHandle {
     background-color: chocolate;
+}
+.resizeHandleGreen {
+    background-color: green;
+}
+.resizeHandleRed {
+    background-color: red;
+}
+.resizeHandleBlue {
+    background-color: blue;
+}
+.resizeHandleGold {
+    background-color: gold;
 }
 
 

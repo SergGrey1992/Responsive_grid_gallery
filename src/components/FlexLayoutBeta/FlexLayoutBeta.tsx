@@ -27,6 +27,7 @@ export function ResizeHandle({
     id,
     index,
 }: ResizeHandlePropsType) {
+    //console.log('id', id)
     return (
         <PanelResizeHandle
             className={[styles.ResizeHandleOuter, className].join(' ')}
@@ -45,64 +46,37 @@ export function ResizeHandle({
     )
 }
 
-const data = [
-    [1, 2, 3],
-    [1, 2, 3, 4],
-    [1, 2],
-]
-
-//<PanelGroup autoSaveId="example" direction={"vertical"}>
-
-// type WrapperPropsType = {
-//     children: NODETYPE
-// }
-//
-// const Wrapper = ({ children }: WrapperPropsType) => {
-//     return (
-//         <React.Fragment
-//         // key={`Wrapper.${index}`}
-//         >
-//             <Panel className={styles.Panel}>
-//                 <PanelGroup
-//                     //id={`PanelGroup.${index}.${n.direction}`}
-//                     direction={children.direction}
-//                     //style={{ overflow: 'initial!important' }}
-//                 >
-//                     {renderLayout(children)}
-//                 </PanelGroup>
-//             </Panel>
-//             {/*<ResizeHandle />*/}
-//             {/*PanelGroup: {n.id}*/}
-//             {children.children ? <ResizeHandle /> : null}
-//         </React.Fragment>
-//     )
-// }
-
 type RenderLayoutPropsType = {
     node: NodeType
     dispatch: any
 }
 
 function RenderLayout({ node, dispatch }: RenderLayoutPropsType) {
-    //console.log('node', node)
-    //const dispatch = useAppDispatch()
-    //const activeId = useAppSelector((state) => state.flex.activeId)
+    console.log('node.children', node.children)
     if (!Array.isArray(node.children)) return undefined
     if (Array.isArray(node.children) && node.children.length === 0) {
         return <div className={styles.emptyBox}>Empty</div>
     }
     return node.children.map((n, index, array) => {
         if (Array.isArray(n.children) && n.direction) {
+            //console.log('12312', n.children.length)
             return (
                 <React.Fragment key={`Wrapper.${index}`}>
-                    {index > 0 && (
-                        <ResizeHandle className={styles.resizeHandleWrapper} />
-                    )}
-                    <Panel className={styles.Panel}>
+                    {/*{index > 0 && (*/}
+                    {/*    <ResizeHandle*/}
+                    {/*        //id={n.id + index + 'test'}*/}
+                    {/*        className={styles.resizeHandleWrapper}*/}
+                    {/*    />*/}
+                    {/*)}*/}
+                    {/*<ResizeHandle className={styles.resizeHandleGreen} />*/}
+                    <Panel className={styles.PanelGroup}>
                         <PanelGroup direction={n.direction}>
                             {RenderLayout({ node: n, dispatch })}
                         </PanelGroup>
                     </Panel>
+                    {!(array.length - 1 === index) && (
+                        <ResizeHandle className={styles.resizeHandleRed} />
+                    )}
                 </React.Fragment>
             )
         }
@@ -112,32 +86,30 @@ function RenderLayout({ node, dispatch }: RenderLayoutPropsType) {
         const divideItem = () => {
             dispatch(divideItemInRowFlexBeta(n))
         }
-        // const changeItemActiveId = () => {
-        //     console.log(activeId === n.id)
-        //     dispatch(
-        //         setActiveItemId(
-        //             //@ts-ignore
-        //             activeId === n.children.url ? '' : n.children.url
-        //         )
-        //     )
-        // }
-
-        // const swapItemsForActiveId = () => {
-        //     //@ts-ignore
-        //     dispatch(setSwapItemsForActiveId(n.children.url))
-        // }
-
+        //@ts-ignore
+        //console.log('node', node.children)
         return (
             <React.Fragment key={`Wrapper.${index}`}>
-                {index > 0 && (
-                    <ResizeHandle
-                        className={styles.resizeHandleWrapper}
-                        //@ts-ignore
-                        index={+n.children.url}
-                    />
-                )}
+                {/*{index > 0 && (*/}
+                {/*<ResizeHandle className={styles.resizeHandleGold} />*/}
 
-                <Panel key={`L.${index}`} className={styles.Panel}>
+                {/*{index > 0 && (*/}
+                {/*    <ResizeHandle*/}
+                {/*        //id={node.id}*/}
+                {/*        className={styles.resizeHandleWrapper}*/}
+                {/*    />*/}
+                {/*)}*/}
+                {/*{index > 0 && (*/}
+                {/*    <ResizeHandle className={styles.resizeHandleBlue} />*/}
+                {/*)}*/}
+                {/*<ResizeHandle className={styles.resizeHandleBlue} />*/}
+                <Panel
+                    key={`L.${index}`}
+                    className={styles.Panel}
+                    onResize={(size) => {
+                        //console.log('size', size)
+                    }}
+                >
                     <div className={styles.PanelContent}>
                         <div className={styles.del}>
                             <button onClick={removeItem}>del</button>
@@ -145,18 +117,6 @@ function RenderLayout({ node, dispatch }: RenderLayoutPropsType) {
                         <div className={styles.divideBox}>
                             <button onClick={divideItem}>divide</button>
                         </div>
-                        {/*<div className={styles.swapperBox}>*/}
-                        {/*    {!activeId && (*/}
-                        {/*        <button onClick={changeItemActiveId}>*/}
-                        {/*            swap*/}
-                        {/*        </button>*/}
-                        {/*    )}*/}
-                        {/*    {!(activeId === n.id) && (*/}
-                        {/*        <button onClick={swapItemsForActiveId}>*/}
-                        {/*            swap!!!!*/}
-                        {/*        </button>*/}
-                        {/*    )}*/}
-                        {/*</div>*/}
                         {/*//@ts-ignore*/}
                         {n.children.url === null ? (
                             <div
@@ -178,11 +138,11 @@ function RenderLayout({ node, dispatch }: RenderLayoutPropsType) {
                                 }}
                             >
                                 <div>Empty img</div>
-                                <div>{n.id}</div>
+                                {/*<div>{n.id}</div>*/}
                             </div>
                         ) : (
                             <div>
-                                <div>{n.id}</div>
+                                {/*<div>{n.id}</div>*/}
                                 <img
                                     width={'100%'}
                                     src={
@@ -195,9 +155,11 @@ function RenderLayout({ node, dispatch }: RenderLayoutPropsType) {
                         )}
                     </div>
                 </Panel>
-                {/*{index === array.length - 1 && (*/}
-                {/*    <ResizeHandle className={styles.resizeHandleWrapper} />*/}
-                {/*)}*/}
+                {!(array.length - 1 === index) && (
+                    <ResizeHandle className={styles.resizeHandleRed} />
+                )}
+
+                {/*<ResizeHandle className={styles.resizeHandleRed} />*/}
             </React.Fragment>
         )
     })
@@ -216,6 +178,23 @@ export const FlexLayoutBeta = ({}: PropsWithChildren<FlexLayoutPropsType>) => {
             <div className={styles.Container}>
                 <div className={styles.BottomRow}>
                     <RenderRootLayoutFlexBeta layout={layout} />
+                    <PanelGroup direction="horizontal" style={{ height: 300 }}>
+                        <Panel style={{ backgroundColor: 'red' }}>left</Panel>
+                        <ResizeHandle />
+                        <Panel>
+                            <PanelGroup direction={'vertical'}>
+                                <Panel style={{ backgroundColor: 'blue' }}>
+                                    left
+                                </Panel>
+                                <ResizeHandle />
+                                <Panel style={{ backgroundColor: 'aqua' }}>
+                                    right
+                                </Panel>
+                            </PanelGroup>
+                        </Panel>
+                        <ResizeHandle />
+                        <Panel style={{ backgroundColor: 'red' }}>right</Panel>
+                    </PanelGroup>
                 </div>
                 <div>
                     <button onClick={addRow}>add Row</button>
@@ -240,10 +219,12 @@ const RenderRootLayoutFlexBeta = ({ layout }: RenderRootLayoutFlexBetaType) => {
                         return
                     dispatch(addItemInRowFlexBeta(row.id))
                 }
+                //@ts-ignore
+                //console.log('row', row.children.length)
                 return (
                     <PanelGroup
                         key={`PanelGroup.${index}`}
-                        autoSaveId={`example.${index}`}
+                        //autoSaveId={`example`}
                         direction={'horizontal'}
                         className={styles.MainRow}
                     >
@@ -339,3 +320,11 @@ const ImageData = () => {
         </div>
     )
 }
+
+const arr = [1]
+
+const newArr = arr.map((el, index, array) => {
+    return !(array.length - 1 === index) ? el + 10 : el
+})
+
+console.log('arr', newArr)

@@ -338,9 +338,6 @@ const recursiveFind = (fullItems: NodeType[], id: string) => {
 
         return node
     })
-
-    console.log([...result], 'result')
-
     return result
 }
 
@@ -446,11 +443,53 @@ const flexLayoutBeta = createSlice({
             state,
             action: PayloadAction<Pick<NodeType, 'id'>>
         ) => {
+            // работчее
+            // const { id } = action.payload
+            // const copyState = [...state.layout]
+            // const test = recursiveFind(copyState, id)
+            // state.layout = test
+            const recursiveUpdate = (
+                items: NodeType[],
+                id: string
+            ): NodeType[] => {
+                return items.map((item) => {
+                    if (item.id === id) {
+                        //нашли
+                        return {
+                            ...item,
+                            direction: 'vertical',
+                            children: [
+                                // {...node.children},
+                                {
+                                    id: v1(),
+                                    children: { url: null },
+                                },
+                                {
+                                    id: v1(),
+                                    children: { url: null },
+                                },
+                            ],
+                            //name: newName
+                        }
+                    } else if (
+                        Array.isArray(item.children) &&
+                        item.children.length > 0
+                    ) {
+                        return {
+                            ...item,
+                            children: recursiveUpdate(
+                                item.children,
+                                id
+                                //newName
+                            ),
+                        }
+                    }
+                    return item
+                })
+            }
+
             const { id } = action.payload
-            const copyState = [...state.layout]
-            const test = recursiveFind(copyState, id)
-            state.layout = test
-            //return state
+            state.layout = recursiveUpdate(state.layout, id)
         },
         addUrlItemInRowFlexBeta: (
             state,
