@@ -65,7 +65,7 @@ const Slider = ({ slides }: SliderPropsType) => {
     //     }
     // }, [embla])
     return (
-        <div style={{ display: 'flex', gap: 16, paddingBottom: 16 }}>
+        <div style={{ display: 'flex', gap: 16 }}>
             <div className={styles.embla}>
                 <div ref={emblaRef} className={styles.emblaViewport}>
                     <div className={styles.emblaContainer}>

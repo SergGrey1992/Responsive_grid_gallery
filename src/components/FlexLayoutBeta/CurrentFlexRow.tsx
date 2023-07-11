@@ -267,8 +267,8 @@ const EmptyImageRender = React.memo(
                     e.preventDefault()
                 }}
             >
-                <div>Empty img</div>
-                <div>{id}</div>
+                <div style={{ color: '#808080' }}>Add a file here</div>
+                {/*<div>{id}</div>*/}
             </div>
         )
     }

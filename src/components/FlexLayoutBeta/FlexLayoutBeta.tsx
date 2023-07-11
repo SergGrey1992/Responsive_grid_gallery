@@ -148,7 +148,9 @@ export const FlexLayoutBeta = ({}: PropsWithChildren<FlexLayoutPropsType>) => {
                     <RootLayoutFlex layout={layout} />
                 </div>
                 <div>
-                    <button onClick={addRow}>add Row</button>
+                    <button className={styles.buttonAddRow} onClick={addRow}>
+                        add Row
+                    </button>
                 </div>
             </div>
             <ImageData />
@@ -284,14 +286,44 @@ const ImageData = () => {
                         setIsOpen(!isOpen)
                     }}
                 >
-                    opener
+                    {!isOpen ? (
+                        <div>
+                            <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M7.41 15.41L12 10.83L16.59 15.41L18 14L12 8L6 14L7.41 15.41Z"
+                                    fill="black"
+                                />
+                            </svg>
+                        </div>
+                    ) : (
+                        <div>
+                            <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M7.41 8.58984L12 13.1698L16.59 8.58984L18 9.99984L12 15.9998L6 9.99984L7.41 8.58984Z"
+                                    fill="black"
+                                />
+                            </svg>
+                        </div>
+                    )}
                 </button>
             </div>
 
             {isOpen && (
                 <>
-                    <div>
-                        <button onClick={openInput}>Open</button>
+                    <div style={{ width: '100%' }}>
+                        <button onClick={openInput}>Add Media</button>
                     </div>
                     <div
                         style={{
