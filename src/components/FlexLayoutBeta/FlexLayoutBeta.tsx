@@ -1,145 +1,142 @@
 import type { PropsWithChildren } from 'react'
-import React, { useEffect, useState } from 'react'
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
+import React, { useEffect, useRef, useState } from 'react'
+import { PanelGroup } from 'react-resizable-panels'
 
 import { useAppDispatch, useAppSelector } from '../../hooks'
+import { useClickPreventionOnDoubleClick } from '../../hooks/useClickPreventionOnDoubleClick'
 import {
     addItemInRowFlexBeta,
     addNewRowFlexBeta,
-    addUrlItemInRowFlexBeta,
-    divideItemInRowFlexBeta,
-    NodeType,
-    removeItemInRowFlexBeta,
+    InitialStateType,
 } from '../../store/reducers/flexLayoutBeta/flexLayoutBeta'
+
+import { RootLayoutFlex } from './RootLayoutFlex'
 
 import styles from './styles.module.css'
 
 interface FlexLayoutPropsType {}
 
-type ResizeHandlePropsType = {
-    className?: string
-    id?: string
-    index?: number
-}
-
-export function ResizeHandle({
-    className = '',
-    id,
-    index,
-}: ResizeHandlePropsType) {
-    //console.log('id', id)
-    return (
-        <PanelResizeHandle
-            className={[styles.ResizeHandleOuter, className].join(' ')}
-            id={id}
-        >
-            {/*{index}*/}
-            <div className={styles.ResizeHandleInner}>
-                <svg className={styles.Icon} viewBox="0 0 24 24">
-                    <path
-                        fill="currentColor"
-                        d="M8,18H11V15H2V13H22V15H13V18H16L12,22L8,18M12,2L8,6H11V9H2V11H22V9H13V6H16L12,2Z"
-                    />
-                </svg>
-            </div>
-        </PanelResizeHandle>
-    )
-}
-
 type RenderLayoutPropsType = {
-    node: NodeType
+    node: any
     dispatch: any
 }
 
 function RenderLayout({ node, dispatch }: RenderLayoutPropsType) {
-    console.log('node.children', node.children)
-    if (!Array.isArray(node.children)) return undefined
-    if (Array.isArray(node.children) && node.children.length === 0) {
-        return <div className={styles.emptyBox}>Empty</div>
-    }
-    return node.children.map((n, index, array) => {
-        //console.log('12312', n.children.length)
-        const removeItem = () => {
-            dispatch(removeItemInRowFlexBeta(n))
-        }
-        const divideItem = () => {
-            dispatch(divideItemInRowFlexBeta(n))
-        }
-        return (
-            <React.Fragment key={`Wrapper.${index}`}>
-                {/*{index > 0 && (*/}
-                {/*    <ResizeHandle*/}
-                {/*        //id={n.id + index + 'test'}*/}
-                {/*        className={styles.resizeHandleWrapper}*/}
-                {/*    />*/}
-                {/*)}*/}
-                {/*<ResizeHandle className={styles.resizeHandleGreen} />*/}
-                <Panel className={styles.PanelGroup}>
-                    <PanelGroup direction={n.direction || 'horizontal'}>
-                        {Array.isArray(n.children) ? (
-                            n.direction && RenderLayout({ node: n, dispatch })
-                        ) : (
-                            <div className={styles.PanelContent}>
-                                <div className={styles.del}>
-                                    <button onClick={removeItem}>del</button>
-                                </div>
-                                <div className={styles.divideBox}>
-                                    <button onClick={divideItem}>divide</button>
-                                </div>
-                                {/*//@ts-ignore*/}
-                                {n.children.url === null ? (
-                                    <div
-                                        className={styles.emptyImgBox}
-                                        onDrop={(e) => {
-                                            const data =
-                                                e.dataTransfer.getData(
-                                                    'text_file'
-                                                )
-
-                                            console.log('data', data)
-                                            dispatch(
-                                                addUrlItemInRowFlexBeta({
-                                                    id: n.id,
-                                                    url: data,
-                                                })
-                                            )
-                                        }}
-                                        onDragOver={(e) => {
-                                            e.preventDefault()
-                                        }}
-                                    >
-                                        <div>Empty img</div>
-                                        {/*<div>{n.id}</div>*/}
-                                    </div>
-                                ) : (
-                                    <div>
-                                        {/*<div>{n.id}</div>*/}
-                                        <img
-                                            width={'100%'}
-                                            src={
-                                                //@ts-ignore
-                                                n.children.url
-                                            }
-                                            alt=""
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </PanelGroup>
-                </Panel>
-                {!(array.length - 1 === index) && (
-                    <ResizeHandle className={styles.resizeHandleRed} />
-                )}
-            </React.Fragment>
-        )
-    })
+    // console.log('node.children', node.children)
+    // if (!Array.isArray(node.children)) return undefined
+    // if (Array.isArray(node.children) && node.children.length === 0) {
+    //     return <div className={styles.emptyBox}>Empty</div>
+    // }
+    // return node.children.map((n, index, array) => {
+    //     //console.log('12312', n.children.length)
+    //     const removeItem = () => {
+    //         dispatch(removeItemInRowFlexBeta(n))
+    //     }
+    //     const divideItem = () => {
+    //         dispatch(divideItemInRowFlexBeta(n))
+    //     }
+    //     return (
+    //         <React.Fragment key={`Wrapper.${index}`}>
+    //             <Panel
+    //                 className={styles.PanelGroup}
+    //                 onResize={(size) => {
+    //                     console.log('*'.repeat(10))
+    //                     console.log('n', n.id)
+    //                     console.log('size', Math.round(size))
+    //                 }}
+    //             >
+    //                 <PanelGroup
+    //                     direction={n.direction || 'horizontal'}
+    //                     onLayout={(size) => {
+    //                         //console.log('size', size)
+    //                     }}
+    //                 >
+    //                     {Array.isArray(n.children) ? (
+    //                         n.direction && RenderLayout({ node: n, dispatch })
+    //                     ) : (
+    //                         <div className={styles.PanelContent}>
+    //                             <div className={styles.del}>
+    //                                 <button onClick={removeItem}>del</button>
+    //                             </div>
+    //                             <div className={styles.divideBox}>
+    //                                 <button onClick={divideItem}>divide</button>
+    //                             </div>
+    //                             {/*//@ts-ignore*/}
+    //                             {n.children.url === null ? (
+    //                                 <div
+    //                                     className={styles.emptyImgBox}
+    //                                     onDrop={(e) => {
+    //                                         const data =
+    //                                             e.dataTransfer.getData(
+    //                                                 'text_file'
+    //                                             )
+    //
+    //                                         console.log('data', data)
+    //                                         dispatch(
+    //                                             addUrlItemInRowFlexBeta({
+    //                                                 id: n.id,
+    //                                                 url: data,
+    //                                             })
+    //                                         )
+    //                                     }}
+    //                                     onDragOver={(e) => {
+    //                                         e.preventDefault()
+    //                                     }}
+    //                                 >
+    //                                     <div>Empty img</div>
+    //                                     <div>{n.id}</div>
+    //                                 </div>
+    //                             ) : (
+    //                                 <ImageRender
+    //                                     //@ts-ignore
+    //                                     url={n.children.url}
+    //                                     id={n.id}
+    //                                     onClick={() => {
+    //                                         console.log('onClick')
+    //                                     }}
+    //                                     onDoubleClick={divideItem}
+    //                                 />
+    //                             )}
+    //                         </div>
+    //                     )}
+    //                 </PanelGroup>
+    //             </Panel>
+    //             {!(array.length - 1 === index) && (
+    //                 <ResizeHandle className={styles.resizeHandleRed} />
+    //             )}
+    //         </React.Fragment>
+    //     )
+    // })
 }
-export const FlexLayoutBeta = ({}: PropsWithChildren<FlexLayoutPropsType>) => {
-    const layout = useAppSelector((state) => state.flex.layout)
-    const root = useAppSelector((state) => state.flex.root)
-    const dispatch = useAppDispatch()
 
+type ImageRenderPropsType = {
+    url: string
+    id: string
+    onClick: () => void
+    onDoubleClick: () => void
+}
+
+const ImageRender = ({
+    url,
+    id,
+    onClick,
+    onDoubleClick,
+}: ImageRenderPropsType) => {
+    const [handleClick, handleDoubleClick] = useClickPreventionOnDoubleClick(
+        onClick,
+        onDoubleClick
+    )
+    return (
+        <div onClick={handleClick} onDoubleClick={handleDoubleClick}>
+            <span>{id}</span>
+            <img width={'100%'} src={url} alt="" />
+        </div>
+    )
+}
+
+export const FlexLayoutBeta = ({}: PropsWithChildren<FlexLayoutPropsType>) => {
+    const layout = useAppSelector((state) => state.flex)
+    const dispatch = useAppDispatch()
     const addRow = () => {
         dispatch(addNewRowFlexBeta())
     }
@@ -148,24 +145,7 @@ export const FlexLayoutBeta = ({}: PropsWithChildren<FlexLayoutPropsType>) => {
         <div className={styles.ContainerLayout}>
             <div className={styles.Container}>
                 <div className={styles.BottomRow}>
-                    <RenderRootLayoutFlexBeta layout={layout} />
-                    <PanelGroup direction="horizontal" style={{ height: 300 }}>
-                        <Panel style={{ backgroundColor: 'red' }}>left</Panel>
-                        <ResizeHandle />
-                        <Panel>
-                            <PanelGroup direction={'vertical'}>
-                                <Panel style={{ backgroundColor: 'blue' }}>
-                                    left
-                                </Panel>
-                                <ResizeHandle />
-                                <Panel style={{ backgroundColor: 'aqua' }}>
-                                    right
-                                </Panel>
-                            </PanelGroup>
-                        </Panel>
-                        <ResizeHandle />
-                        <Panel style={{ backgroundColor: 'red' }}>right</Panel>
-                    </PanelGroup>
+                    <RootLayoutFlex layout={layout} />
                 </div>
                 <div>
                     <button onClick={addRow}>add Row</button>
@@ -177,7 +157,7 @@ export const FlexLayoutBeta = ({}: PropsWithChildren<FlexLayoutPropsType>) => {
 }
 
 type RenderRootLayoutFlexBetaType = {
-    layout: NodeType[]
+    layout: InitialStateType[]
 }
 
 const RenderRootLayoutFlexBeta = ({ layout }: RenderRootLayoutFlexBetaType) => {
@@ -186,8 +166,9 @@ const RenderRootLayoutFlexBeta = ({ layout }: RenderRootLayoutFlexBetaType) => {
         <>
             {layout.map((row, index) => {
                 const addItemInRow = () => {
-                    if (Array.isArray(row.children) && row.children.length >= 6)
-                        return
+                    //todo
+                    // if (Array.isArray(row.children) && row.children.length >= 6)
+                    //     return
                     dispatch(addItemInRowFlexBeta(row.id))
                 }
                 //@ts-ignore
@@ -195,20 +176,21 @@ const RenderRootLayoutFlexBeta = ({ layout }: RenderRootLayoutFlexBetaType) => {
                 return (
                     <PanelGroup
                         key={`PanelGroup.${index}`}
-                        //autoSaveId={`example`}
+                        autoSaveId={`example`}
                         direction={'horizontal'}
                         className={styles.MainRow}
                     >
                         <div className={styles.ButtonRowAddItem}>
-                            {!(
-                                Array.isArray(row.children) &&
-                                row.children.length >= 6
-                            ) && (
-                                <button onClick={addItemInRow}>add item</button>
-                            )}
+                            {/*todo*/}
+                            {/*{!(*/}
+                            {/*    Array.isArray(row.children) &&*/}
+                            {/*    row.children.length >= 6*/}
+                            {/*) && (*/}
+                            {/*    <button onClick={addItemInRow}>add item</button>*/}
+                            {/*)}*/}
                         </div>
 
-                        {RenderLayout({ node: row, dispatch })}
+                        {/*{RenderLayout({ node: row, dispatch })}*/}
                     </PanelGroup>
                 )
             })}
@@ -217,6 +199,29 @@ const RenderRootLayoutFlexBeta = ({ layout }: RenderRootLayoutFlexBetaType) => {
 }
 
 const ImageData = () => {
+    //const layout = useAppSelector((state) => state.flex.layout)
+    const [urls, setUrls] = useState<string[]>([])
+    // useEffect(() => {
+    //     const extractIds = (items: NodeType[]) => {
+    //         return items
+    //             .reduce<string[]>((urls_, item) => {
+    //                 //@ts-ignore
+    //                 urls_.push(item.children.url)
+    //
+    //                 if (
+    //                     Array.isArray(item.children) &&
+    //                     item.children.length > 0
+    //                 ) {
+    //                     urls_.push(...extractIds(item.children))
+    //                 }
+    //
+    //                 return urls_
+    //             }, [])
+    //             .filter((url) => typeof url === 'string')
+    //     }
+    //     setUrls(extractIds(layout))
+    // }, [layout])
+    const ref = useRef<HTMLInputElement | null>(null)
     const [fileList, setFileList] = useState<File[]>()
     const [imgList, setImgList] = useState<string[]>([])
     const onChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -226,6 +231,17 @@ const ImageData = () => {
             setFileList([...event.target.files])
         }
     }
+    //const extractIds = (items) => {
+    //   return items.reduce((ids, item) => {
+    //     ids.push(item.id);
+    //
+    //     if (item.children && item.children.length > 0) {
+    //       ids.push(...extractIds(item.children));
+    //     }
+    //
+    //     return ids;
+    //   }, []);
+    // };
     useEffect(() => {
         if (!fileList) {
             setImgList([])
@@ -247,6 +263,19 @@ const ImageData = () => {
     }, [fileList?.length])
     //console.log('imgList', imgList)
     const [isOpen, setIsOpen] = useState(true)
+    const resetAllImageData = () => {
+        setFileList([])
+        setImgList([])
+        if (ref.current) {
+            ref.current.value = ''
+        }
+    }
+    const openInput = () => {
+        if (ref.current) {
+            ref.current.value = ''
+            ref.current.click()
+        }
+    }
     return (
         <div className={styles.imageData}>
             <div className={styles.imageLibOpener}>
@@ -262,13 +291,32 @@ const ImageData = () => {
             {isOpen && (
                 <>
                     <div>
-                        <input type="file" multiple onChange={onChangeFile} />
+                        <button onClick={openInput}>Open</button>
                     </div>
+                    <div
+                        style={{
+                            width: 0,
+                            height: 0,
+                            opacity: 0,
+                        }}
+                    >
+                        <input
+                            ref={ref}
+                            type="file"
+                            multiple
+                            onChange={onChangeFile}
+                        />
+                    </div>
+
                     <div className={styles.imagesPreview}>
                         {imgList.map((file, index) => {
+                            if (urls.includes(file)) {
+                                return null
+                            }
                             return (
                                 <div key={`img.${index}`}>
                                     <img
+                                        style={{ width: '40%' }}
                                         src={file}
                                         alt=""
                                         draggable
@@ -299,3 +347,11 @@ const newArr = arr.map((el, index, array) => {
 })
 
 console.log('arr', newArr)
+
+const E = () => {
+    return (
+        <div id={'h'}>
+            <div id={'V'}></div>
+        </div>
+    )
+}
