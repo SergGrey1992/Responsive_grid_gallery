@@ -358,9 +358,17 @@ const ImageData = () => {
                                             return null
                                         }
                                         return (
-                                            <div key={`img.${index}`}>
+                                            <div
+                                                key={`img.${index}`}
+                                                style={{
+                                                    height: 'fit-content',
+                                                }}
+                                            >
                                                 <img
-                                                    style={{ width: '40%' }}
+                                                    style={{
+                                                        height: 190,
+                                                        objectFit: 'contain',
+                                                    }}
                                                     src={file}
                                                     alt=""
                                                     draggable
