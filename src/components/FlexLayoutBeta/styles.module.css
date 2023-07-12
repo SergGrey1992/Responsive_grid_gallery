@@ -124,6 +124,7 @@
     max-height: 250px;
     background-color: #141414;
     border: 1px solid #333333;
+    z-index: 100;
     /*display: flex;*/
     /*justify-content: center;*/
 }
@@ -149,6 +150,7 @@
     display: flex;
     gap: 10px;
     margin-top: 12px;
+    overflow-x: auto;
 }
 
 .resizeHandleWrapper {
@@ -297,10 +299,20 @@
     max-height: 200px;
     min-height: 200px;
     border: 1px solid #4D4D4D;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
+    /*display: flex;*/
+    /*align-items: center;*/
+    /*justify-content: center;*/
     /*overflow-x: auto;*/
+}
+
+.emptySlider {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666666;
 }
 /*SLIDER*/
 

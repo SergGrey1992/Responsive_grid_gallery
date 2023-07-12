@@ -12,6 +12,8 @@ import {
     removeItemInRowFlexBeta,
 } from '../../store/reducers/flexLayoutBeta/flexLayoutBeta'
 
+import { ImgListType } from './FlexLayoutBeta'
+
 import styles from './styles.module.css'
 
 interface CurrentFlexRowPropsType extends InitialStateType {}
@@ -156,6 +158,7 @@ const RenderWrapper = ({ el, rowId }: RenderWrapperPropsType) => {
                                         <ImageRender
                                             id={ell.id}
                                             url={ell.file.originalUrl}
+                                            type={ell.file.type}
                                             onClick={removeItem}
                                             onDoubleClick={divideItem}
                                         />
@@ -196,6 +199,7 @@ const RenderWrapper = ({ el, rowId }: RenderWrapperPropsType) => {
                 <ImageRender
                     id={el.id}
                     url={el.file.originalUrl}
+                    type={el.file.type}
                     onClick={removeItem}
                     onDoubleClick={divideItem}
                 />
@@ -206,6 +210,7 @@ const RenderWrapper = ({ el, rowId }: RenderWrapperPropsType) => {
 
 type ImageRenderPropsType = {
     url: string
+    type: 'image' | 'video'
     id: string
     onClick: (param?: any) => void
     onDoubleClick: (param: any) => void
@@ -213,6 +218,7 @@ type ImageRenderPropsType = {
 
 const ImageRender = ({
     url,
+    type,
     id,
     onClick,
     onDoubleClick,
@@ -227,7 +233,11 @@ const ImageRender = ({
             }}
             //onDoubleClick={handleDoubleClick}
         >
-            <img width={'100%'} src={url} alt="" />
+            {type === 'image' ? (
+                <img width={'100%'} src={url} alt="" />
+            ) : (
+                <video width={'100%'} src={url} />
+            )}
         </div>
     )
 }
@@ -246,11 +256,15 @@ const EmptyImageRender = React.memo(
         const handlerDrag = useCallback(
             (e: React.DragEvent<HTMLDivElement>) => {
                 const data = e.dataTransfer.getData('text_file')
+                const parseData = JSON.parse(data) as ImgListType
                 dispatch(
                     addUrlItemInRowFlexBeta({
                         rowId,
                         id,
-                        url: data,
+                        url: parseData.url,
+                        type: parseData.type.includes('video')
+                            ? 'video'
+                            : 'image',
                     })
                 )
             },

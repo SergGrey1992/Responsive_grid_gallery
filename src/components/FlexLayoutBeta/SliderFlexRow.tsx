@@ -9,6 +9,8 @@ import {
     InitialStateType,
 } from '../../store/reducers/flexLayoutBeta/flexLayoutBeta'
 
+import { ImgListType } from './FlexLayoutBeta'
+
 import styles from './styles.module.css'
 
 interface SliderFlexRowPropsType extends InitialStateType {}
@@ -17,10 +19,13 @@ export const SliderFlexRow = ({ id, rowLayout }: SliderFlexRowPropsType) => {
     const dispatch = useAppDispatch()
     const handlerDrag = (e: React.DragEvent<HTMLDivElement>) => {
         const data = e.dataTransfer.getData('text_file')
+        const parseData = JSON.parse(data) as ImgListType
+        console.log('dataType', parseData.type)
         dispatch(
             addUrlItemInSliderRow({
                 rowId: id,
-                url: data,
+                url: parseData.url,
+                type: parseData.type.includes('video') ? 'video' : 'image',
             })
         )
     }
@@ -67,16 +72,8 @@ const Slider = ({ slides }: SliderPropsType) => {
     console.log('slides', slides)
     if (slides.length === 0) {
         return (
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100%',
-                    color: '#666666',
-                }}
-            >
-                Select a file from your computer and drag it to this area
+            <div className={styles.emptySlider}>
+                <p>Select a file from your computer and drag it to this area</p>
             </div>
         )
     }
@@ -89,16 +86,29 @@ const Slider = ({ slides }: SliderPropsType) => {
                             return (
                                 <div key={index} className={styles.emblaSlide}>
                                     <div className={styles.emblaSlideInner}>
-                                        <img
-                                            width={'auto'}
-                                            height={'auto'}
-                                            style={{
-                                                objectFit: 'contain',
-                                                maxHeight: 198,
-                                            }} //toDo maxHeight сделать адаптивным
-                                            src={slide.file?.originalUrl}
-                                            alt=""
-                                        />
+                                        {slide.file &&
+                                        slide.file.type === 'image' ? (
+                                            <img
+                                                width={'auto'}
+                                                height={'auto'}
+                                                style={{
+                                                    objectFit: 'contain',
+                                                    maxHeight: 198,
+                                                }} //toDo maxHeight сделать адаптивным
+                                                src={slide.file.originalUrl}
+                                                alt=""
+                                            />
+                                        ) : (
+                                            <video
+                                                src={slide.file?.originalUrl}
+                                                width={'auto'}
+                                                height={'auto'}
+                                                style={{
+                                                    objectFit: 'contain',
+                                                    maxHeight: 198,
+                                                }}
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             )

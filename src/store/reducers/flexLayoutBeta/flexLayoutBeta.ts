@@ -204,9 +204,14 @@ const flexLayoutBeta = createSlice({
         },
         addUrlItemInRowFlexBeta: (
             state,
-            action: PayloadAction<{ rowId: string; id: string; url: string }>
+            action: PayloadAction<{
+                rowId: string
+                id: string
+                url: string
+                type: 'image' | 'video'
+            }>
         ) => {
-            const { rowId, id, url } = action.payload
+            const { rowId, id, url, type } = action.payload
             const currenRow = state.find((row) => row.id === rowId)
             if (currenRow) {
                 const index = currenRow.rowLayout.findIndex(
@@ -215,7 +220,7 @@ const flexLayoutBeta = createSlice({
                 if (index > -1) {
                     currenRow.rowLayout[index].file = {
                         originalUrl: url,
-                        type: 'image',
+                        type,
                         poster: '',
                         thumbnail: '',
                     }
@@ -224,15 +229,19 @@ const flexLayoutBeta = createSlice({
         },
         addUrlItemInSliderRow: (
             state,
-            action: PayloadAction<{ rowId: string; url: string }>
+            action: PayloadAction<{
+                rowId: string
+                url: string
+                type: 'image' | 'video'
+            }>
         ) => {
-            const { rowId, url } = action.payload
+            const { rowId, url, type } = action.payload
             const currentRow = state.find((row) => row.id === rowId)
             if (currentRow && currentRow.type === 'slider') {
                 const newItem: ElementType = {
                     id: v1(),
                     file: {
-                        type: 'image',
+                        type,
                         originalUrl: url,
                         poster: '',
                         thumbnail: '',

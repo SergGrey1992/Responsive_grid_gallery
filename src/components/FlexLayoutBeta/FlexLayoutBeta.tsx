@@ -202,6 +202,11 @@ const RenderRootLayoutFlexBeta = ({ layout }: RenderRootLayoutFlexBetaType) => {
     )
 }
 
+export type ImgListType = {
+    type: string
+    url: string
+}
+
 const ImageData = () => {
     const layout = useAppSelector((state) => state.flex)
     const [urls, setUrls] = useState<string[]>([])
@@ -219,10 +224,9 @@ const ImageData = () => {
         }
         setUrls(extractIds(layout))
     }, [layout])
-    console.log('urls', urls)
     const ref = useRef<HTMLInputElement | null>(null)
     const [fileList, setFileList] = useState<File[]>()
-    const [imgList, setImgList] = useState<string[]>([])
+    const [imgList, setImgList] = useState<ImgListType[]>([])
     const onChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         //console.log('event', event.target.files)
         if (event.target.files) {
@@ -230,17 +234,6 @@ const ImageData = () => {
             setFileList([...event.target.files])
         }
     }
-    //const extractIds = (items) => {
-    //   return items.reduce((ids, item) => {
-    //     ids.push(item.id);
-    //
-    //     if (item.children && item.children.length > 0) {
-    //       ids.push(...extractIds(item.children));
-    //     }
-    //
-    //     return ids;
-    //   }, []);
-    // };
     useEffect(() => {
         if (!fileList) {
             setImgList([])
@@ -248,15 +241,16 @@ const ImageData = () => {
         }
         console.log('fileList')
         fileList.forEach((file) => {
+            console.log('file', file)
             const objectUrl = URL.createObjectURL(file)
-            setImgList((prev) => [...prev, objectUrl])
+            setImgList((prev) => [...prev, { type: file.type, url: objectUrl }])
         })
 
         // free memory when ever this component is unmounted
         return () => {
             //URL.revokeObjectURL(objectUrl)
             imgList.forEach((file) => {
-                URL.revokeObjectURL(file)
+                URL.revokeObjectURL(file.url)
             })
         }
     }, [fileList?.length])
@@ -276,7 +270,7 @@ const ImageData = () => {
         }
     }
     const [emblaRef, embla] = useEmblaCarousel(
-        { loop: false, dragFree: true },
+        { loop: false, dragFree: true, watchDrag: false },
         [
             WheelGesturesPlugin({
                 //forceWheelAxis,
@@ -325,7 +319,6 @@ const ImageData = () => {
                     )}
                 </button>
             </div>
-
             {isOpen && (
                 <>
                     <div style={{ width: '100%' }}>
@@ -347,47 +340,67 @@ const ImageData = () => {
                     </div>
 
                     <div className={styles.imagesPreview}>
-                        <div className={styles.embla}>
-                            <div
-                                ref={emblaRef}
-                                className={styles.emblaViewport}
-                            >
-                                <div className={styles.emblaContainer}>
-                                    {imgList.map((file, index) => {
-                                        if (urls.includes(file)) {
-                                            return null
-                                        }
-                                        return (
-                                            <div
-                                                key={`img.${index}`}
-                                                style={{
-                                                    height: 'fit-content',
-                                                }}
-                                            >
-                                                <img
-                                                    style={{
-                                                        height: 190,
-                                                        objectFit: 'contain',
-                                                    }}
-                                                    src={file}
-                                                    alt=""
-                                                    draggable
-                                                    onDragStart={(ev) => {
-                                                        console.log('onDrag')
-                                                        //ev.preventDefault()
-                                                        ev.stopPropagation()
-                                                        ev.dataTransfer.setData(
-                                                            'text_file',
-                                                            file
-                                                        )
-                                                    }}
-                                                />
-                                            </div>
-                                        )
-                                    })}
+                        {imgList.map((file, index) => {
+                            if (urls.includes(file.url)) {
+                                return null
+                            }
+                            return (
+                                <div
+                                    key={`img.${index}`}
+                                    style={{
+                                        height: 'fit-content',
+                                    }}
+                                >
+                                    {file.type.includes('image') ? (
+                                        <img
+                                            style={{
+                                                height: 190,
+                                                objectFit: 'contain',
+                                            }}
+                                            src={file.url}
+                                            alt=""
+                                            draggable
+                                            onDragStart={(ev) => {
+                                                ev.stopPropagation()
+                                                const data = JSON.stringify({
+                                                    url: file.url,
+                                                    type: file.type,
+                                                })
+                                                ev.dataTransfer.setData(
+                                                    'text_file',
+                                                    data
+                                                )
+                                            }}
+                                        />
+                                    ) : (
+                                        <video
+                                            draggable
+                                            onDragStart={(ev) => {
+                                                console.log('onDrag')
+                                                //ev.preventDefault()
+                                                ev.stopPropagation()
+                                                const data = JSON.stringify({
+                                                    url: file.url,
+                                                    type: file.type,
+                                                })
+                                                ev.dataTransfer.setData(
+                                                    'text_file',
+                                                    data
+                                                )
+                                            }}
+                                            src={file.url}
+                                            controls={true}
+                                            style={{
+                                                height: 190,
+                                                objectFit: 'contain',
+                                            }}
+                                            muted={true}
+                                            autoPlay
+                                        />
+                                    )}
                                 </div>
-                            </div>
-                        </div>
+                            )
+                        })}
                     </div>
                 </>
             )}
