@@ -201,28 +201,23 @@ const RenderRootLayoutFlexBeta = ({ layout }: RenderRootLayoutFlexBetaType) => {
 }
 
 const ImageData = () => {
-    //const layout = useAppSelector((state) => state.flex.layout)
+    const layout = useAppSelector((state) => state.flex)
     const [urls, setUrls] = useState<string[]>([])
-    // useEffect(() => {
-    //     const extractIds = (items: NodeType[]) => {
-    //         return items
-    //             .reduce<string[]>((urls_, item) => {
-    //                 //@ts-ignore
-    //                 urls_.push(item.children.url)
-    //
-    //                 if (
-    //                     Array.isArray(item.children) &&
-    //                     item.children.length > 0
-    //                 ) {
-    //                     urls_.push(...extractIds(item.children))
-    //                 }
-    //
-    //                 return urls_
-    //             }, [])
-    //             .filter((url) => typeof url === 'string')
-    //     }
-    //     setUrls(extractIds(layout))
-    // }, [layout])
+    useEffect(() => {
+        const extractIds = (items: InitialStateType[]) => {
+            return items.reduce((acc, item) => {
+                const ids = item.rowLayout.map((el) => {
+                    if (el.file) {
+                        return el.file?.originalUrl
+                    }
+                    return ''
+                })
+                return [...acc, ...ids]
+            }, [] as string[])
+        }
+        setUrls(extractIds(layout))
+    }, [layout])
+    console.log('urls', urls)
     const ref = useRef<HTMLInputElement | null>(null)
     const [fileList, setFileList] = useState<File[]>()
     const [imgList, setImgList] = useState<string[]>([])

@@ -293,7 +293,8 @@
 
 /*SLIDER*/
 .sliderContainer {
-    max-height: 50%;
+    /*max-height: 50%;*/
+    max-height: 200px;
     min-height: 200px;
     border: 1px solid #4D4D4D;
     /*overflow-x: auto;*/
@@ -310,12 +311,13 @@
 }
 .emblaContainer {
     display: flex;
+    gap: 24px;
     will-change: transform;
     /*margin-left: -1rem;*/
 }
 .emblaSlide {
-    flex: 0 0 auto;
-    width: 100%;
+    flex: 1 1 auto;
+    /*width: 100%;*/
     position: relative;
     /*padding-left: 1rem;*/
     counter-increment: embla;

@@ -66,14 +66,14 @@ export type InitialStateType = {
 }
 
 const initialState: InitialStateType[] = [
-    // {
-    //     id: '1',
-    //     order: 1,
-    //     type: 'slider',
-    //     rowLayout: [],
-    //     //rowLayout: [elH, elImg, elImg1, elH1],
-    //     // rowLayout: [elH, [elImg, elImg1], elH1],
-    // },
+    {
+        id: v1(),
+        order: 1,
+        type: '',
+        rowLayout: [],
+        //rowLayout: [elH, elImg, elImg1, elH1],
+        // rowLayout: [elH, [elImg, elImg1], elH1],
+    },
     // { id: '2', order: 2, type: 'default', rowLayout: [] },
 ]
 
@@ -101,13 +101,15 @@ const flexLayoutBeta = createSlice({
             const currentEl = state.find((row) => row.id === rowId)
             if (currentEl) {
                 currentEl.type = rowType
-                currentEl.rowLayout.push({
-                    id: v1(),
-                    file: null,
-                    order: currentEl.rowLayout.length + 1,
-                    nestedOrder: null,
-                    size: 100,
-                })
+                if (rowType === 'row') {
+                    currentEl.rowLayout.push({
+                        id: v1(),
+                        file: null,
+                        order: currentEl.rowLayout.length + 1,
+                        nestedOrder: null,
+                        size: 100,
+                    })
+                }
             }
         },
         addItemInRowFlexBeta: (state, action: PayloadAction<string>) => {

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
 
@@ -15,7 +15,7 @@ interface SliderFlexRowPropsType extends InitialStateType {}
 
 export const SliderFlexRow = ({ id, rowLayout }: SliderFlexRowPropsType) => {
     const dispatch = useAppDispatch()
-    const handlerDrag = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    const handlerDrag = (e: React.DragEvent<HTMLDivElement>) => {
         const data = e.dataTransfer.getData('text_file')
         dispatch(
             addUrlItemInSliderRow({
@@ -23,7 +23,7 @@ export const SliderFlexRow = ({ id, rowLayout }: SliderFlexRowPropsType) => {
                 url: data,
             })
         )
-    }, [])
+    }
     return (
         <div
             className={styles.sliderContainer}
@@ -43,7 +43,7 @@ type SliderPropsType = {
 
 const Slider = ({ slides }: SliderPropsType) => {
     const [emblaRef, embla] = useEmblaCarousel(
-        { loop: false, dragFree: false },
+        { loop: false, dragFree: true },
         [
             WheelGesturesPlugin({
                 //forceWheelAxis,
@@ -64,6 +64,7 @@ const Slider = ({ slides }: SliderPropsType) => {
     //         onSelect()
     //     }
     // }, [embla])
+    console.log('slides', slides)
     return (
         <div style={{ display: 'flex', gap: 16 }}>
             <div className={styles.embla}>
@@ -74,6 +75,9 @@ const Slider = ({ slides }: SliderPropsType) => {
                                 <div key={index} className={styles.emblaSlide}>
                                     <div className={styles.emblaSlideInner}>
                                         <img
+                                            width={'100%'}
+                                            height={'100%'}
+                                            style={{ objectFit: 'contain' }}
                                             src={slide.file?.originalUrl}
                                             alt=""
                                         />
