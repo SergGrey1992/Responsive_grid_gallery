@@ -7,6 +7,7 @@ import {
     addUrlItemInSliderRow,
     ElementType,
     InitialStateType,
+    removeUrlItemInSliderRow,
 } from '../../store/reducers/flexLayoutBeta/flexLayoutBeta'
 
 import { ImgListType } from './FlexLayoutBeta'
@@ -37,16 +38,18 @@ export const SliderFlexRow = ({ id, rowLayout }: SliderFlexRowPropsType) => {
                 e.preventDefault()
             }}
         >
-            <Slider slides={rowLayout} />
+            <Slider slides={rowLayout} rowId={id} />
         </div>
     )
 }
 
 type SliderPropsType = {
     slides: ElementType[]
+    rowId: string
 }
 
-const Slider = ({ slides }: SliderPropsType) => {
+const Slider = ({ slides, rowId }: SliderPropsType) => {
+    const dispatch = useAppDispatch()
     const [emblaRef, embla] = useEmblaCarousel(
         { loop: false, dragFree: true },
         [
@@ -77,6 +80,7 @@ const Slider = ({ slides }: SliderPropsType) => {
             </div>
         )
     }
+
     return (
         <div style={{ display: 'flex', gap: 16 }}>
             <div className={styles.embla}>
@@ -84,7 +88,20 @@ const Slider = ({ slides }: SliderPropsType) => {
                     <div className={styles.emblaContainer}>
                         {slides.map((slide, index) => {
                             return (
-                                <div key={index} className={styles.emblaSlide}>
+                                <div
+                                    key={index}
+                                    className={styles.emblaSlide}
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        dispatch(
+                                            removeUrlItemInSliderRow({
+                                                rowId,
+                                                itemId: slide.id,
+                                            })
+                                        )
+                                        console.log('onClick')
+                                    }}
+                                >
                                     <div className={styles.emblaSlideInner}>
                                         {slide.file &&
                                         slide.file.type === 'image' ? (

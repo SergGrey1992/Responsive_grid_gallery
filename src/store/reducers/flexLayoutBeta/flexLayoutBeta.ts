@@ -253,6 +253,24 @@ const flexLayoutBeta = createSlice({
                 currentRow.rowLayout.push(newItem)
             }
         },
+        removeUrlItemInSliderRow: (
+            state,
+            action: PayloadAction<{ rowId: string; itemId: string }>
+        ) => {
+            const { rowId, itemId } = action.payload
+            const currentRow = state.find((row) => row.id === rowId)
+            if (currentRow) {
+                const index = currentRow.rowLayout.findIndex(
+                    (el) => el.id === itemId
+                )
+                if (index > -1) {
+                    currentRow.rowLayout.splice(index, 1)
+                    if (currentRow.rowLayout.length === 0) {
+                        currentRow.type = ''
+                    }
+                }
+            }
+        },
     },
 })
 
@@ -265,4 +283,5 @@ export const {
     divideItemInRowFlexBeta,
     addUrlItemInRowFlexBeta,
     addUrlItemInSliderRow,
+    removeUrlItemInSliderRow,
 } = flexLayoutBeta.actions
