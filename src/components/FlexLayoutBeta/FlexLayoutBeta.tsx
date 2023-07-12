@@ -1,6 +1,8 @@
 import type { PropsWithChildren } from 'react'
 import React, { useEffect, useRef, useState } from 'react'
 import { PanelGroup } from 'react-resizable-panels'
+import useEmblaCarousel from 'embla-carousel-react'
+import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
 
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { useClickPreventionOnDoubleClick } from '../../hooks/useClickPreventionOnDoubleClick'
@@ -273,6 +275,15 @@ const ImageData = () => {
             ref.current.click()
         }
     }
+    const [emblaRef, embla] = useEmblaCarousel(
+        { loop: false, dragFree: true },
+        [
+            WheelGesturesPlugin({
+                //forceWheelAxis,
+                //target,
+            }),
+        ]
+    )
     return (
         <div className={styles.imageData}>
             <div className={styles.imageLibOpener}>
@@ -336,30 +347,39 @@ const ImageData = () => {
                     </div>
 
                     <div className={styles.imagesPreview}>
-                        {imgList.map((file, index) => {
-                            if (urls.includes(file)) {
-                                return null
-                            }
-                            return (
-                                <div key={`img.${index}`}>
-                                    <img
-                                        style={{ width: '40%' }}
-                                        src={file}
-                                        alt=""
-                                        draggable
-                                        onDragStart={(ev) => {
-                                            console.log('onDrag')
-                                            //ev.preventDefault()
-                                            ev.stopPropagation()
-                                            ev.dataTransfer.setData(
-                                                'text_file',
-                                                file
-                                            )
-                                        }}
-                                    />
+                        <div className={styles.embla}>
+                            <div
+                                ref={emblaRef}
+                                className={styles.emblaViewport}
+                            >
+                                <div className={styles.emblaContainer}>
+                                    {imgList.map((file, index) => {
+                                        if (urls.includes(file)) {
+                                            return null
+                                        }
+                                        return (
+                                            <div key={`img.${index}`}>
+                                                <img
+                                                    style={{ width: '40%' }}
+                                                    src={file}
+                                                    alt=""
+                                                    draggable
+                                                    onDragStart={(ev) => {
+                                                        console.log('onDrag')
+                                                        //ev.preventDefault()
+                                                        ev.stopPropagation()
+                                                        ev.dataTransfer.setData(
+                                                            'text_file',
+                                                            file
+                                                        )
+                                                    }}
+                                                />
+                                            </div>
+                                        )
+                                    })}
                                 </div>
-                            )
-                        })}
+                            </div>
+                        </div>
                     </div>
                 </>
             )}
