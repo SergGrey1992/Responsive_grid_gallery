@@ -75,9 +75,12 @@ const Slider = ({ slides }: SliderPropsType) => {
                                 <div key={index} className={styles.emblaSlide}>
                                     <div className={styles.emblaSlideInner}>
                                         <img
-                                            width={'100%'}
-                                            height={'100%'}
-                                            style={{ objectFit: 'contain' }}
+                                            width={'auto'}
+                                            height={'auto'}
+                                            style={{
+                                                objectFit: 'contain',
+                                                maxHeight: 198,
+                                            }} //toDo maxHeight сделать адаптивным
                                             src={slide.file?.originalUrl}
                                             alt=""
                                         />
