@@ -73,11 +73,10 @@ const Slider = ({ slides }: SliderPropsType) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     height: '100%',
-                    color: '#333333',
+                    color: '#666666',
                 }}
             >
-                select a file from your computer and drag it to this area to fix
-                a new slide
+                Select a file from your computer and drag it to this area
             </div>
         )
     }
