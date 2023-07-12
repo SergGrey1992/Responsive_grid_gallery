@@ -73,7 +73,7 @@ export const CurrentFlexRow = ({
     return (
         <PanelGroup direction={'horizontal'} className={styles.MainRow}>
             <div className={styles.ButtonRowAddItem}>
-                <button onClick={addItemInRow}>add item</button>
+                <button onClick={addItemInRow}>+</button>
             </div>
             {rowLayout.length === 0 ? (
                 <div className={styles.emptyBox}>Empty</div>
