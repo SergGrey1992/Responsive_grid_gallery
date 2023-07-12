@@ -107,6 +107,10 @@ const Slider = ({ slides }: SliderPropsType) => {
                                                     objectFit: 'contain',
                                                     maxHeight: 198,
                                                 }}
+                                                muted
+                                                autoPlay
+                                                playsInline
+                                                controls
                                             />
                                         )}
                                     </div>

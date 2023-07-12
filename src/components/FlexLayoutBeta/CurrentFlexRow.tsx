@@ -236,7 +236,14 @@ const ImageRender = ({
             {type === 'image' ? (
                 <img width={'100%'} src={url} alt="" />
             ) : (
-                <video width={'100%'} src={url} />
+                <video
+                    width={'100%'}
+                    src={url}
+                    muted
+                    autoPlay
+                    playsInline
+                    controls
+                />
             )}
         </div>
     )
