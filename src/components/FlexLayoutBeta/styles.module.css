@@ -297,6 +297,9 @@
     max-height: 200px;
     min-height: 200px;
     border: 1px solid #4D4D4D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     /*overflow-x: auto;*/
 }
 /*SLIDER*/
@@ -316,7 +319,7 @@
     /*margin-left: -1rem;*/
 }
 .emblaSlide {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     /*width: 100%;*/
     position: relative;
     /*padding-left: 1rem;*/
@@ -324,6 +327,7 @@
 }
 .emblaSlideInner {
     /*background-color: rgb(40, 44, 52);*/
+    width: fit-content;
     position: relative;
     /*border-radius: 0.5rem;*/
     /*min-height: 200px;*/

@@ -73,11 +73,10 @@ const Slider = ({ slides }: SliderPropsType) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     height: '100%',
-                    color: '#333333',
+                    color: '#666666',
                 }}
             >
-                select a file from your computer and drag it to this area to fix
-                a new slide
+                Select a file from your computer and drag it to this area
             </div>
         )
     }
@@ -91,9 +90,12 @@ const Slider = ({ slides }: SliderPropsType) => {
                                 <div key={index} className={styles.emblaSlide}>
                                     <div className={styles.emblaSlideInner}>
                                         <img
-                                            width={'100%'}
-                                            height={'100%'}
-                                            style={{ objectFit: 'contain' }}
+                                            width={'auto'}
+                                            height={'auto'}
+                                            style={{
+                                                objectFit: 'contain',
+                                                maxHeight: 198,
+                                            }} //toDo maxHeight сделать адаптивным
                                             src={slide.file?.originalUrl}
                                             alt=""
                                         />
