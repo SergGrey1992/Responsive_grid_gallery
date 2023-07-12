@@ -65,6 +65,22 @@ const Slider = ({ slides }: SliderPropsType) => {
     //     }
     // }, [embla])
     console.log('slides', slides)
+    if (slides.length === 0) {
+        return (
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%',
+                    color: '#333333',
+                }}
+            >
+                select a file from your computer and drag it to this area to fix
+                a new slide
+            </div>
+        )
+    }
     return (
         <div style={{ display: 'flex', gap: 16 }}>
             <div className={styles.embla}>
