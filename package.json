@@ -16,7 +16,7 @@
     "axios": "^1.4.0",
     "embla-carousel-react": "^8.0.0-rc10",
     "embla-carousel-wheel-gestures": "^8.0.0-rc04",
-    "framer-motion": "^10.11.2",
+    "framer-motion": "^10.12.21",
     "re-resizable": "^6.9.9",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",
