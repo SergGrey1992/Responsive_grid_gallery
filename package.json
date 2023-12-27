@@ -13,7 +13,7 @@
     "@types/react": "^18.0.31",
     "@types/react-dom": "^18.0.11",
     "@types/uuid": "^9.0.1",
-    "axios": "^1.4.0",
+    "axios": "^1.6.3",
     "embla-carousel-react": "^8.0.0-rc10",
     "embla-carousel-wheel-gestures": "^8.0.0-rc04",
     "framer-motion": "^10.11.2",
